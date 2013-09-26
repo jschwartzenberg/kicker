@@ -49,7 +49,7 @@
 MediumButton::MediumButton(QWidget *parent, const KFileItem &fileItem)
 	: PanelPopupButton(parent), mActions(this), mFileItem(fileItem)
 {
-	mActions.setAssociatedWidget(this);
+	mActions.associateWidget(this);
 
 	QAction *a = KStandardAction::paste(this, SLOT(slotPaste()), this);
         mActions.addAction("pasteto", a);
@@ -100,18 +100,17 @@ void MediumButton::initPopup()
 	QMenu *old_popup = popup();
 
 	KFileItemList items;
-	items.append(&mFileItem);
+	items.append(mFileItem);
 
-	KonqPopupMenu::KonqPopupFlags kpf =
-		  KonqPopupMenu::ShowProperties
-		| KonqPopupMenu::ShowNewWindow;
+	KParts::BrowserExtension::PopupFlags kpf =
+		  KParts::BrowserExtension::ShowProperties;
 
 	KParts::BrowserExtension::PopupFlags bef =
 		  KParts::BrowserExtension::DefaultPopupItems;
 
-	KonqPopupMenu *new_popup = new KonqPopupMenu(0L, items,
-	                                   KUrl("media:/"), mActions, 0L,
-	                                   this, kpf, bef);
+	KonqPopupMenu *new_popup = new KonqPopupMenu(items,
+	                                   KUrl("media:/"), mActions,
+	                                   0L, kpf, bef, this);
         // KPopupTitle removed in KDE4
 //	KPopupTitle *title = new KPopupTitle(new_popup);
 //	title->setTitle(mFileItem.text());
@@ -173,7 +172,7 @@ void MediumButton::dropEvent(QDropEvent *e)
 {
 	mOpenTimer.stop();
 
-	KonqOperations::doDrop(&mFileItem, mFileItem.url(), e, this);
+	KonqOperations::doDrop(mFileItem, mFileItem.url(), e, this);
 }
 
 void MediumButton::slotDragOpen()

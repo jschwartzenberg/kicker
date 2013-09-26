@@ -313,7 +313,8 @@ void MediaApplet::slotDeleteItem(const KFileItem &fileItem)
 
 void MediaApplet::slotRefreshItems(const QList<QPair<KFileItem, KFileItem> > &entries)
 {
-	foreach(QPair<KFileItem, KFileItem> entry, entries)
+	QPair<KFileItem, KFileItem> entry;
+	foreach(entry, entries)
 	{
     const KFileItem item = entry.second;
 		kDebug()<<"MediaApplet::slotRefreshItems:"<< item.url().url();
@@ -367,7 +368,7 @@ void MediaApplet::loadConfig()
 
 	if(c.hasKey("ExcludedTypes"))
 	{
-		mExcludedTypesList = c.readEntry("ExcludedTypes",QStringList(),';');
+		mExcludedTypesList = c.readEntry("ExcludedTypes",QStringList());
 	}
 	else
 	{
@@ -382,7 +383,7 @@ void MediaApplet::loadConfig()
 
 	if(c.hasKey("ExcludedMedia"))
 	{
-		mExcludedList = c.readEntry("ExcludedMedia",QStringList(),';');
+		mExcludedList = c.readEntry("ExcludedMedia",QStringList());
 	}
 	else
 	{
@@ -395,8 +396,8 @@ void MediaApplet::saveConfig()
 {
 	KConfigGroup c(config(), "General");
 
-	c.writeEntry("ExcludedTypes", mExcludedTypesList, ';');
-	c.writeEntry("ExcludedMedia", mExcludedList, ';');
+	c.writeEntry("ExcludedTypes", mExcludedTypesList);
+	c.writeEntry("ExcludedMedia", mExcludedList);
 
 	c.sync();
 }
