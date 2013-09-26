@@ -38,7 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdialog.h>
 #include <krun.h>
 #include <kmessagebox.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 #include "runapplet.h"
 #include "runapplet.moc"
@@ -237,7 +237,7 @@ void RunApplet::run_command(const QString& command)
     }
     else if (cmd == "logout")
 	{
-	    bool shutdown = KWorkSpace::requestShutDown();
+	    bool shutdown = KWorkSpace::canShutDown();
 	    if( !shutdown )
             {
                 // This i18n string is in kdesktop/desktop.cc as well. Maybe we should DCOP to kdesktop instead ?
@@ -247,6 +247,9 @@ void RunApplet::run_command(const QString& command)
                                             "session will not be saved with a forced shutdown." ) );
                 focusNeeded = true;
             }
+            else {
+		KWorkSpace::requestShutDown();
+	    }
 	    goto hide;
 	}
     else
