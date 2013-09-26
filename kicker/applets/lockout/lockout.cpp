@@ -45,7 +45,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kiconloader.h>
 #include <krun.h>
 #include <kdebug.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
+#include <KConfigGroup>
 
 #include <stdlib.h>
 #include <kauthorized.h>
@@ -236,7 +237,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
 
                 popup->setItemChecked( 100, bTransparent );
                 popup->connectItem(100, this, SLOT( slotTransparent() ) );
-                if (conf->entryIsImmutable( "Transparent" ))
+                if (conf->isGroupImmutable( "Transparent" ))
                     popup->setItemEnabled( 100, false );
                 popup->exec( me->globalPos() );
                 delete popup;
@@ -257,7 +258,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
 
                 popup->setItemChecked( 100, bTransparent );
                 popup->connectItem(100, this, SLOT( slotTransparent() ) );
-                if (conf->entryIsImmutable( "Transparent" ))
+                if (conf->isGroupImmutable( "Transparent" ))
                     popup->setItemEnabled( 100, false );
                 popup->exec( me->globalPos() );
                 delete popup;
