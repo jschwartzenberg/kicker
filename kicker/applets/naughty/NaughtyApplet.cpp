@@ -208,7 +208,7 @@ NaughtyApplet::loadSettings()
   monitor_->setTriggerLevel(config()->group("").readEntry("Threshold", 20));
 
   // Add 'X' as a default.
-  if (ignoreList_.isEmpty() && !config()->hasKey("IgnoreList"))
+  if (ignoreList_.isEmpty() && !config()->hasGroup("IgnoreList"))
     ignoreList_.append("X");
 }
 
