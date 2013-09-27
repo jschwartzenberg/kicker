@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kurl.h>
 #include <k3urldrag.h>
 #include <ktoolinvocation.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 #include "kickerSettings.h"
 #include "utils.h"
 #include "prefmenu.h"
