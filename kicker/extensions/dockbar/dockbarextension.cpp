@@ -36,6 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <kglobal.h>
+#include <KConfigGroup>
 
 #include "dockbarextension.h"
 #include "dockbarextension.moc"
@@ -322,8 +323,8 @@ void DockBarExtension::loadContainerConfig()
     for (QStringList::Iterator it = applets.begin(); it != applets.end(); ++it) {
         conf.changeGroup(*it);
         if (!conf.exists()) continue;
-        QString cmd = conf.readPathEntry("Command");
-        QString resName  = conf.readPathEntry("resName");
+        QString cmd = conf.readPathEntry("Command", false);
+        QString resName  = conf.readPathEntry("resName", false);
         QString resClass = conf.readEntry("resClass");
         if (cmd.isEmpty() || resName.isEmpty() || resClass.isEmpty()) continue;
 
