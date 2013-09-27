@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 
-#include <kwindowlistmenu.h>
+#include <kworkspace/kwindowlistmenu.h>
 #include <klocale.h>
 
 #include "windowlistbutton.h"
