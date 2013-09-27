@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QColor>
 #include <QCursor>
 #include <QImage>
+#include <qimageblitz/qimageblitz.h>
+#include <QMenu>
 #include <QPainter>
 #include <QPixmap>
 #include <QStyle>
@@ -49,15 +51,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kiconeffect.h>
 #include <kiconloader.h>
-#include <kimageeffect.h>
 #include <kauthorized.h>
 
 #include "utils.h"
 #include "kickerSettings.h"
 #include "taskbar.h"
 #include "taskbarsettings.h"
-#include "tasklmbmenu.h"
-#include "taskrmbmenu.h"
+//#include "tasklmbmenu.h"
+//#include "taskrmbmenu.h"
 
 #include "taskcontainer.h"
 #include "taskcontainer.moc"
@@ -642,20 +643,20 @@ void TaskContainer::drawButton(QPainter *p)
 
                 if (reverse)
                 {
-                    QImage gradient = KImageEffect::gradient(
+                    QImage gradient = Blitz::gradient(
                                             QSize(30, height()),
                                             QColor(255,255,255),
                                             QColor(0,0,0),
-                                            KImageEffect::HorizontalGradient);
+                                            Blitz::HorizontalGradient);
                     bgp.drawImage(0, 0, gradient);
                 }
                 else
                 {
-                    QImage gradient = KImageEffect::gradient(
+                    QImage gradient = Blitz::gradient(
                                             QSize(30, height()),
                                             QColor(0,0,0),
                                             QColor(255,255,255),
-                                            KImageEffect::HorizontalGradient);
+                                            Blitz::HorizontalGradient);
                     bgp.drawImage(width() - 30, 0, gradient);
                 }
 
@@ -686,7 +687,11 @@ void TaskContainer::drawButton(QPainter *p)
             // blend text into background image
             QImage img = pm->toImage();
             QImage timg = tpm.toImage();
-            KImageEffect::blend(img, timg, blendGradient, KImageEffect::Red);
+            QPainter p2;
+            p2.begin(&img);
+            p2.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+            p2.fillRect(img.rect(), timg);
+	    p2.end();
             p->drawImage(0, 0, img);
         }
         else
