@@ -36,7 +36,7 @@ TrashButton::TrashButton(QWidget *parent)
 	: PanelPopupButton(parent), mActions(this),
 	  mFileItem()
 {
-	mActions.setAssociatedWidget(this);
+	mActions.associateWidget(this);
 
 	KIO::UDSEntry entry;
 	KIO::NetAccess::stat(KUrl("trash:/"), entry, 0L);
@@ -84,18 +84,17 @@ void TrashButton::initPopup()
 	QMenu *old_popup = popup();
 
 	KFileItemList items;
-	items.append(&mFileItem);
+	items.append(mFileItem);
 
-	KonqPopupMenu::KonqPopupFlags kpf =
-		  KonqPopupMenu::ShowProperties
-		| KonqPopupMenu::ShowNewWindow;
+	KParts::BrowserExtension::PopupFlags kpf =
+		  KParts::BrowserExtension::ShowProperties;
 
 	KParts::BrowserExtension::PopupFlags bef =
 		  KParts::BrowserExtension::DefaultPopupItems;
 
-	KonqPopupMenu *new_popup = new KonqPopupMenu(0L, items,
+	KonqPopupMenu *new_popup = new KonqPopupMenu(items,
 	                                   KUrl("trash:/"), mActions, 0L,
-	                                   this, kpf, bef);
+	                                   kpf, bef, this);
 //	KPopupTitle *title = new KPopupTitle(new_popup);
 //	title->setTitle(i18n("Trash"));
 
@@ -128,7 +127,7 @@ void TrashButton::dragEnterEvent(QDragEnterEvent* e)
 
 void TrashButton::dropEvent(QDropEvent *e)
 {
-	KonqOperations::doDrop(0L, mFileItem.url(), e, this);
+	KonqOperations::doDrop(mFileItem, mFileItem.url(), e, this);
 }
 
 QString TrashButton::tileName()
