@@ -318,8 +318,8 @@ void ButtonContainer::slotMenuClosed()
 void ButtonContainer::checkImmutability(const KConfigGroup& config)
 {
     m_immutable = config.isImmutable() ||
-                  config.entryIsImmutable("ConfigFile") ||
-                  config.entryIsImmutable("FreeSpace2");
+                  config.isEntryImmutable("ConfigFile") ||
+                  config.isEntryImmutable("FreeSpace2");
 }
 
 // KMenuButton containerpan
