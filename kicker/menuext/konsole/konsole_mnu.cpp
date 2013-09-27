@@ -42,8 +42,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 #include "konsole_mnu.h"
+#include <KConfigGroup>
 
 extern "C"
 {
@@ -124,7 +125,7 @@ void KonsoleMenu::initialize()
         QString text = cg.readEntry("Name");
 
         // try to locate the binary
-        QString exec= cg.readPathEntry("Exec");
+        QString exec= cg.readPathEntry("Exec", false);
         if (exec.startsWith("su -c \'"))
         {
              exec = exec.mid(7,exec.length()-8);
