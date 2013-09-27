@@ -28,6 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kdesktopfile.h>
 #include <krandom.h>
+#include <kconfiggroup.h>
 
 #include "appletinfo.h"
 
@@ -84,7 +85,8 @@ AppletInfo::AppletInfo( const QString& deskFile, const QString& configFile, cons
     setIcon(df.readIcon());
 
     // library
-    setLibrary(df.desktopGroup().readEntry("X-KDE-Library"));
+    fprintf(stderr, "appletinfo.cpp, line 88 default value should be: %s\n", qPrintable(df.desktopGroup().readEntry("X-KDE-Library", "no value found :((")));
+    setLibrary(df.desktopGroup().readEntry("X-KDE-Library", ""));
 
     // is it a unique applet?
     setIsUnique(df.desktopGroup().readEntry("X-KDE-UniqueApplet", false));
