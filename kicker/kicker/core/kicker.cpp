@@ -206,7 +206,7 @@ void Kicker::configure()
     KSharedConfig::Ptr c = KGlobal::config();
     c->reparseConfiguration();
 	KConfigGroup cg( c, "General");
-    m_canAddContainers = !c->entryIsImmutable("Applets2");
+    m_canAddContainers = !c->isGroupImmutable("Applets2");
 
     KickerSettings::self()->readConfig();
 
