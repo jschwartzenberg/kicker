@@ -39,6 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QResizeEvent>
 #include <QStyle>
 #include <QStyleOption>
+#include <QTimer>
 
 #include <QApplication>
 #include <QtGui/QCursor>
@@ -116,7 +117,7 @@ PanelButton::PanelButton( QWidget* parent, const char* name )
     calculateIconSize();
     setAcceptDrops(true);
 
-    d->textColor = KGlobalSettings::textColor();
+    d->textColor = KGlobalSettings::activeTextColor();
 
     updateSettings(KGlobalSettings::SETTINGS_MOUSE);
 
@@ -134,7 +135,7 @@ PanelButton::PanelButton( QWidget* parent )
     calculateIconSize();
     setAcceptDrops(true);
 
-    d->textColor = KGlobalSettings::textColor();
+    d->textColor = KGlobalSettings::activeTextColor();
 
     updateSettings(KGlobalSettings::SETTINGS_MOUSE);
 
