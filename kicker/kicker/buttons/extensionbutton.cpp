@@ -43,7 +43,7 @@ ExtensionButton::ExtensionButton( const QString& desktopFile, QWidget* parent )
 ExtensionButton::ExtensionButton( const KConfigGroup& config, QWidget* parent )
     : PanelPopupButton( parent, "extensionbuttton" )
 {
-    initialize( config.readPathEntry("DesktopFile") );
+    initialize( config.readPathEntry("DesktopFile", false) );
 }
 
 void ExtensionButton::initialize( const QString& desktopFile )
