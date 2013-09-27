@@ -101,8 +101,8 @@ void ExtensionManager::initialize()
 		KConfigGroup cg(config,"Main Panel");
         if (cg.hasKey("DesktopFile"))
         {
-            m_mainPanel = pm->createExtensionContainer(cg.readPathEntry("DesktopFile"),
-                                                       true, cg.readPathEntry("ConfigFile"),
+            m_mainPanel = pm->createExtensionContainer(cg.readPathEntry("DesktopFile", false),
+                                                       true, cg.readPathEntry("ConfigFile", false),
                                                        "Main Panel");
         }
     }
@@ -154,9 +154,9 @@ void ExtensionManager::initialize()
 		KConfigGroup cg3(config, extensionId);
 
         ExtensionContainer* e =
-            pm->createExtensionContainer(cg3.readPathEntry("DesktopFile"),
+            pm->createExtensionContainer(cg3.readPathEntry("DesktopFile", false),
                                          true, // is startup
-                                         cg3.readPathEntry("ConfigFile"),
+                                         cg3.readPathEntry("ConfigFile", false),
                                          extensionId);
 
         if (e)
@@ -266,7 +266,7 @@ void ExtensionManager::migrateMenubar()
             continue;
         }
 
-        QString extension = config.readPathEntry("ConfigFile");
+        QString extension = config.readPathEntry("ConfigFile", false);
         KConfig extensionConfig(KStandardDirs::locate("config", extension));
 		KConfigGroup eg (&extensionConfig, "General");
 
@@ -281,12 +281,12 @@ void ExtensionManager::migrateMenubar()
                     continue;
                 }
 
-                KConfigGroup group(&extensionConfig, appletId.toLatin1());
+                KConfigGroup group(&extensionConfig, appletId);
                 QString appletType = appletId.left(appletId.lastIndexOf('_'));
 
                 if (appletType == "Applet")
                 {
-                    QString appletFile = group.readPathEntry("DesktopFile");
+                    QString appletFile = group.readPathEntry("DesktopFile", false);
                     if (appletFile.indexOf("menuapplet.desktop") != -1)
                     {
                         QString menubarConfig = KStandardDirs::locate("config", extension);
