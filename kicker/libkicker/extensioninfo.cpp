@@ -24,6 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QFileInfo>
 #include <kdesktopfile.h>
 #include <krandom.h>
+#include <KConfigGroup>
 
 #include "extensioninfo.h"
 
