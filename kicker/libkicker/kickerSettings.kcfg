@@ -200,7 +200,7 @@
 
 <entry name="ButtonTextColor" key="TextColor" type="Color" >
       <label>Text color for the buttons.</label>
-      <default code="true">KGlobalSettings::textColor()</default>
+      <default code="true">KGlobalSettings::activeTextColor()</default>
    </entry>
 
 </group>
