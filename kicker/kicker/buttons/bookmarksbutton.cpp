@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kactioncollection.h>
 #include <kbookmark.h>
 #include <kbookmarkmenu.h>
-#include <konqbookmarkmanager.h>
 #include <klocale.h>
 #include <kmenu.h>
 
@@ -42,7 +41,7 @@ BookmarksButton::BookmarksButton(QWidget* parent)
     actionCollection = new KActionCollection( this );
     bookmarkParent = new KMenu(this);
     bookmarkParent->setObjectName("bookmarks");
-    bookmarkMenu = new KBookmarkMenu(KonqBookmarkManager::self(), 0, 
+    bookmarkMenu = new KBookmarkMenu(KBookmarkManager::userBookmarksManager(), 0,
                                      bookmarkParent,
                                      actionCollection );
     setPopup(bookmarkParent);
@@ -63,6 +62,6 @@ void BookmarksButton::initPopup()
 
 void BookmarksButton::properties()
 {
-    KonqBookmarkManager::self()->slotEditBookmarks();
+    KBookmarkManager::userBookmarksManager()->slotEditBookmarks();
 }
 
