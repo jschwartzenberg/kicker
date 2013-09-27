@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <krun.h>
 #include <ktoolinvocation.h>
 #include <klocale.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 #include <kdebug.h>
 
@@ -55,7 +55,7 @@ URLButton::URLButton( const QString& url, QWidget* parent )
 URLButton::URLButton( const KConfigGroup& config, QWidget* parent )
   : PanelButton( parent )
 {
-    initialize( config.readPathEntry("URL") );
+    initialize( config.readPathEntry("URL", false) );
 }
 
 URLButton::~URLButton()
