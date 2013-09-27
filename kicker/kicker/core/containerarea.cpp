@@ -128,15 +128,15 @@ void ContainerArea::initialize(bool useDefaultConfig)
 
     // restore applet layout or load a default panel layout
 	KConfigGroup cg(_config, "General");
-    if (_config->hasKey("Applets2"))
+    if (_config->hasGroup("Applets2"))
     {
-        if (_config->groupIsImmutable("General"))
+        if (_config->isGroupImmutable("General"))
         {
             m_immutable = true;
         }
 
         m_canAddContainers = !m_immutable &&
-                             !_config->entryIsImmutable("Applets2");
+                             !_config->isGroupImmutable("Applets2");
         loadContainers(cg.readEntry("Applets2", QStringList() ));
     }
     else if (useDefaultConfig)
@@ -301,7 +301,7 @@ void ContainerArea::loadContainers(const QStringList& containers)
             continue;
         }
 
-        KConfigGroup group( _config, appletId.toLatin1() );
+        KConfigGroup group( _config, appletId );
 
         BaseContainer* a = 0;
 
@@ -354,11 +354,11 @@ void ContainerArea::loadContainers(const QStringList& containers)
         {
             bool immutable = Kicker::self()->isImmutable() ||
                              group.isImmutable() ||
-                             group.entryIsImmutable("ConfigFile");
+                             group.isEntryImmutable("ConfigFile");
             a = PluginManager::self()->createAppletContainer(
-                   group.readPathEntry("DesktopFile"),
+                   group.readPathEntry("DesktopFile", false),
                    true, // isStartup
-                   group.readPathEntry("ConfigFile"),
+                   group.readPathEntry("ConfigFile", false),
                    m_opMenu,
                    m_contents,
                    immutable);
@@ -400,7 +400,7 @@ void ContainerArea::saveContainerConfig(bool layoutOnly)
         BaseContainer *a = dynamic_cast<BaseContainer*>( layout->itemAt(i)->widget() );
         if ( a )
         {
-            KConfigGroup group( _config, a->appletId().toLatin1() );
+            KConfigGroup group( _config, a->appletId() );
             a->saveConfiguration( group, layoutOnly );
             alist.append( a->appletId() );
         }
