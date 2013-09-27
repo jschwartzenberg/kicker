@@ -36,7 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kiconeffect.h>
 #include <kdebug.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 // the header where the configuration dialog is defined.
 #include "exe_dlg.h"
@@ -75,9 +75,9 @@ NonKDEAppButton::NonKDEAppButton( const KConfigGroup& config, QWidget* parent )
     // call the initialization method, this time with values from a config file
     initialize(config.readEntry("Name"),
                config.readEntry("Description"),
-               config.readPathEntry("Path"),
+               config.readPathEntry("Path", false),
                config.readEntry("Icon"),
-               config.readPathEntry("CommandLine"),
+               config.readPathEntry("CommandLine", false),
                config.readEntry("RunInTerminal", false));
 
     // see comment on connect in above constructor
