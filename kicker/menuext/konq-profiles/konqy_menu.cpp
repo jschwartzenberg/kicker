@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstandarddirs.h>
 #include <kio/global.h>
 #include <kconfig.h>
+#include <KConfigGroup>
 
 #include <QRegExp>
 #include <QFileInfo>
