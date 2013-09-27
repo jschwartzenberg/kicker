@@ -81,8 +81,8 @@ void DesktopButton::dragEnterEvent( QDragEnterEvent *ev )
 void DesktopButton::dropEvent( QDropEvent *ev )
 {
     KUrl dPath (  KGlobalSettings::desktopPath() );
-    KFileItem item( dPath, QString::fromLatin1( "inode/directory" ), KFileItem::Unknown );
-    KonqOperations::doDrop( &item, dPath, ev, this );
+    const KFileItem item( dPath, QString::fromLatin1( "inode/directory" ), KFileItem::Unknown );
+    KonqOperations::doDrop( item, dPath, ev, this );
     PanelButton::dropEvent(ev);
 }
 
