@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <k3urldrag.h>
 #include <krecentdocument.h>
 #include <kmenu.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 #include <kdesktopfileactions.h>
 #include "recentdocsmenu.h"
 
