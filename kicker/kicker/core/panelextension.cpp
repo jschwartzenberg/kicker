@@ -40,6 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmenu.h>
 #include <kiconloader.h>
 #include <kconfig.h>
+#include <KConfigGroup>
 #include <KStandardGuiItem>
 #include <kauthorized.h>
 #include <QtDBus/qdbusconnection.h>
