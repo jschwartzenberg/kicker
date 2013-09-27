@@ -51,7 +51,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <krun.h>
 
 #include <kauthorized.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 #include "kickerSettings.h"
 
@@ -436,8 +436,8 @@ void PanelBrowserMenu::dragMoveEvent(QDragMoveEvent *ev)
 void PanelBrowserMenu::dropEvent( QDropEvent *ev )
 {
     KUrl u( path() );
-    KFileItem item( u, QString::fromLatin1( "inode/directory" ), KFileItem::Unknown );
-    KonqOperations::doDrop( &item, u, ev, this );
+    const KFileItem item( u, QString::fromLatin1( "inode/directory" ), KFileItem::Unknown );
+    KonqOperations::doDrop( item, u, ev, this );
     KPanelMenu::dropEvent(ev);
     // ### TODO: Update list
 }

@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <dmctl.h>
+#include <kworkspace/kdisplaymanager.h>
 #include <QtDBus/QtDBus>
 
 #include <QDesktopWidget>
@@ -51,14 +51,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstandarddirs.h>
 #include <kwindowsystem.h>
 #include <kauthorized.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 #include "utils.h"
 
 #include "container_base.h"
 #include "kicker.h"
 #include "kickerSettings.h"
-#include "konqbookmarkmanager.h"
+#include "kbookmarkmanager.h"
 #include "menuinfo.h"
 #include "quickbrowser_mnu.h"
 #include "recentapps.h"
@@ -221,7 +221,7 @@ void PanelKMenu::initialize()
         KMenu * bookmarkParent = new KMenu(this);
         bookmarkParent->setObjectName("bookmarks" );
         delete bookmarkMenu; // can't reuse old one, the popup has been deleted
-        bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), 0, bookmarkParent, actionCollection );
+        bookmarkMenu = new KBookmarkMenu( KBookmarkManager::userBookmarksManager(), 0, bookmarkParent, actionCollection );
 
         insertItem(Plasma::menuIconSet("bookmark"),
                    i18n("Bookmarks"), bookmarkParent);
@@ -276,7 +276,7 @@ void PanelKMenu::initialize()
         addSeparator();
     }
 
-    if (DM().isSwitchable() && KAuthorized::authorizeKAction("switch_user"))
+    if (KDisplayManager().isSwitchable() && KAuthorized::authorizeKAction("switch_user"))
     {
         sessionsMenu = new QMenu( this );
         insertItem(Plasma::menuIconSet("switchuser"),
@@ -336,7 +336,7 @@ void PanelKMenu::slotLogout()
 void PanelKMenu::slotPopulateSessions()
 {
     int p = 0;
-    DM dm;
+    KDisplayManager dm;
 
     sessionsMenu->clear();
     if (KAuthorized::authorizeKAction("start_new_session") && (p = dm.numReserve()) >= 0)
@@ -353,7 +353,7 @@ void PanelKMenu::slotPopulateSessions()
     SessList sess;
     if (dm.localSessions( sess ))
         for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
-            int id = sessionsMenu->insertItem( DM::sess2Str( *it ), (*it).vt );
+            int id = sessionsMenu->insertItem( KDisplayManager::sess2Str( *it ), (*it).vt );
             if (!(*it).vt)
                 sessionsMenu->setItemEnabled( id, false );
             if ((*it).self)
@@ -368,7 +368,7 @@ void PanelKMenu::slotSessionActivated( int ent )
     else if (ent == 101)
         doNewSession( false );
     else if (!sessionsMenu->isItemChecked( ent ))
-        DM().lockSwitchVT( ent );
+        KDisplayManager().lockSwitchVT( ent );
 }
 
 void PanelKMenu::doNewSession( bool lock )
@@ -398,7 +398,7 @@ void PanelKMenu::doNewSession( bool lock )
     if (lock)
         slotLock();
 
-    DM().startReserve();
+    KDisplayManager().startReserve();
 }
 
 void PanelKMenu::slotSaveSession()

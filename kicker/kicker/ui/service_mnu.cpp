@@ -53,7 +53,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ktoolinvocation.h>
 #include <kio/copyjob.h>
 #include <kauthorized.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 #include <QtDBus/QtDBus>
 
 #include "krunner_interface.h"
