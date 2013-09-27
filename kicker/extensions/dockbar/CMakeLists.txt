@@ -9,7 +9,7 @@ set(dockbar_panelextension_PART_SRCS dockcontainer.cpp dockbarextension.cpp )
 kde4_add_plugin(dockbar_panelextension ${dockbar_panelextension_PART_SRCS})
 
 
-target_link_libraries(dockbar_panelextension  kickermain ${KDE4_KDEUI_LIBS} )
+target_link_libraries(dockbar_panelextension  kickermain ${KDE4_KDEUI_LIBS} X11 )
 
 install(TARGETS dockbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
