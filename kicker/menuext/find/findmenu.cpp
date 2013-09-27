@@ -25,9 +25,10 @@
 #include <kicon.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 #include "findmenu.h"
 #include <kdesktopfile.h>
+#include <KConfigGroup>
 
 K_EXPORT_KICKER_MENUEXT( find, FindMenu )
 
