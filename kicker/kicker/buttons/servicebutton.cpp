@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <kurl.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 #include "utils.h"
 #include "kicker.h"
@@ -75,9 +75,9 @@ ServiceButton::ServiceButton( const KConfigGroup& config, QWidget* parent )
     setObjectName("ServiceButton");
     QString id;
     if (config.hasKey("StorageId"))
-       id = config.readPathEntry("StorageId");
+       id = config.readPathEntry("StorageId", false);
     else
-       id = config.readPathEntry("DesktopFile");
+       id = config.readPathEntry("DesktopFile", false);
     loadServiceFromId(id);
     initialize();
 }
