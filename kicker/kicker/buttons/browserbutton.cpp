@@ -54,7 +54,7 @@ BrowserButton::BrowserButton( const KConfigGroup& config, QWidget* parent )
     : PanelPopupButton( parent, "BrowserButton" )
     , topMenu( 0 )
 {
-    initialize( config.readEntry("Icon", "kdisknav"), config.readPathEntry("Path") );
+    initialize( config.readEntry("Icon", "kdisknav"), config.readPathEntry("Path", false) );
 }
 
 BrowserButton::~BrowserButton()
@@ -109,8 +109,8 @@ void BrowserButton::dropEvent( QDropEvent *ev )
 {
     KUrl path ( topMenu->path() );
     _menuTimer->stop();
-    KFileItem item( path, QString::fromLatin1( "inode/directory" ), KFileItem::Unknown );
-    KonqOperations::doDrop( &item, path, ev, this );
+    const KFileItem item( path, QString::fromLatin1( "inode/directory" ), KFileItem::Unknown );
+    KonqOperations::doDrop( item, path, ev, this );
     PanelButton::dropEvent(ev);
 }
 
