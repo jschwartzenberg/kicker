@@ -44,7 +44,7 @@ ServiceMenuButton::ServiceMenuButton( const KConfigGroup& config, QWidget* paren
   : PanelPopupButton( parent, "ServiceMenuButton" )
   , topMenu( 0 )
 {
-    initialize( config.readPathEntry("RelPath") );
+    initialize( config.readPathEntry("RelPath", false) );
 }
 
 void ServiceMenuButton::initialize( const QString& relPath )
