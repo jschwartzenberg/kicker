@@ -9,7 +9,7 @@ set(extensiondebugger_SRCS extensiondebugger.cpp )
 
 kde4_add_executable(extensiondebugger ${extensiondebugger_SRCS})
 
-target_link_libraries(extensiondebugger  ${KDE4_KDECORE_LIBS} kickermain )
+target_link_libraries(extensiondebugger  ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} kickermain )
 
 
 ########### next target ###############
