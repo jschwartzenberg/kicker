@@ -65,9 +65,9 @@ void SystemMenu::initialize()
 
     for (; it!=end; ++it)
     {
-        QString icon = (*it)->iconName();
-        KUrl url = (*it)->url();
-        QString name = (*it)->name();
+        QString icon = (*it).iconName();
+        KUrl url = (*it).url();
+        QString name = (*it).name();
         append(icon, url, name);
     }
 }
