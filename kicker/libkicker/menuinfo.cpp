@@ -27,12 +27,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QWidget>
 
 #include <kapplication.h>
-#include <kconfig.h>
 #include <klibloader.h>
 #include <kstandarddirs.h>
 #include <kpanelmenu.h>
 #include <kparts/componentfactory.h>
 #include <kauthorized.h>
+#include <KConfigGroup>
 
 class MenuInfo::Private
 {
