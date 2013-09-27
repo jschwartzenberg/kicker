@@ -1,9 +1,0 @@
-[KSplash Theme: Default]
-Name = KDE 3.5 Splash Screen
-Description = Waves of change
-Version = 1.0
-Author = Danny Allen <danny@dannyallen.co.uk>
-Homepage = http://www.kde-edu.org
-
-# Theme behaviour settings.
-Engine = KSplashX

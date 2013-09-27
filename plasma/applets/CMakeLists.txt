@@ -1,6 +1,0 @@
-add_subdirectory(battery)
-add_subdirectory(clock)
-add_subdirectory(digital-clock)
-add_subdirectory(pager)
-add_subdirectory(systemtray)
-add_subdirectory(tasks)
