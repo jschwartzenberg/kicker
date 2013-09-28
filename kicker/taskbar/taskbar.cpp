@@ -46,14 +46,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
-#include <kwindowlistmenu.h>
+#include <kworkspace/kwindowlistmenu.h>
 #include <QDBusInterface>
 #include "kshadowengine.h"
 #include "kshadowsettings.h"
 #include "kickerSettings.h"
 #include "taskbarsettings.h"
 #include "taskcontainer.h"
-#include "taskmanager.h"
+#include "taskmanager/taskmanager.h"
 #include "simplebutton.h"
 
 #include "taskbar.h"
