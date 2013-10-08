@@ -57,15 +57,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kickerSettings.h"
 #include "taskbar.h"
 #include "taskbarsettings.h"
-//#include "tasklmbmenu.h"
-//#include "taskrmbmenu.h"
+#include "tasklmbmenu.h"
+#include "taskrmbmenu.h"
 
 #include "taskcontainer.h"
 #include "taskcontainer.moc"
 
 QImage TaskContainer::blendGradient = QImage();
 
-TaskContainer::TaskContainer(Task::TaskPtr task, TaskBar* bar,
+TaskContainer::TaskContainer(TaskManager::Task *task, TaskBar* bar,
                              QWidget *parent)
     : QToolButton(parent),
       currentFrame(0),
@@ -92,7 +92,7 @@ TaskContainer::TaskContainer(Task::TaskPtr task, TaskBar* bar,
     dragSwitchTimer.start(0);
 }
 
-TaskContainer::TaskContainer(Startup::StartupPtr startup, PixmapList& startupFrames,
+TaskContainer::TaskContainer(TaskManager::Startup *startup, PixmapList& startupFrames,
                              TaskBar* bar, QWidget *parent)
     : QToolButton(parent),
       currentFrame(0),
@@ -112,7 +112,7 @@ TaskContainer::TaskContainer(Startup::StartupPtr startup, PixmapList& startupFra
 
     sid = m_startup->bin();
 
-    connect(m_startup.data(), SIGNAL(changed()), SLOT(update()));
+    connect(m_startup, SIGNAL(changed()), SLOT(update()));
 
     dragSwitchTimer.setSingleShot(true);
     dragSwitchTimer.start(333);
@@ -155,18 +155,18 @@ void TaskContainer::stopTimers()
 void TaskContainer::taskChanged()
 {
     const QObject* source = sender();
-    Task::TaskPtr task;
-    Task::List::const_iterator itEnd = tasks.constEnd();
-    for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
+    TaskManager::Task *task;
+    QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        if ((*it).data() == source)
+        if ((*it) == source)
         {
             task = *it;
             break;
         }
     }
 
-    if (task)
+    if (task != NULL)
     {
         checkAttention(task);
     }
@@ -178,18 +178,18 @@ void TaskContainer::taskChanged()
 void TaskContainer::iconChanged()
 {
     const QObject* source = sender();
-    Task::TaskPtr task;
-    Task::List::const_iterator itEnd = tasks.constEnd();
-    for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
+    TaskManager::Task* task;
+    QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        if ((*it).data() == source)
+        if ((*it) == source)
         {
             task = *it;
             break;
         }
     }
 
-    if (task && !m_filteredTasks.empty() && task != m_filteredTasks.first())
+    if (task != NULL && !m_filteredTasks.empty() && task != m_filteredTasks.first())
     {
         if (m_menu)
         {
@@ -202,10 +202,10 @@ void TaskContainer::iconChanged()
 
 void TaskContainer::setLastActivated()
 {
-    Task::List::const_iterator itEnd = m_filteredTasks.constEnd();
-    for (Task::List::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::const_iterator itEnd = m_filteredTasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = *it;
+        TaskManager::Task *t = *it;
         if ( t->isActive() )
         {
             lastActivated = t;
@@ -246,7 +246,7 @@ void TaskContainer::animationTimerFired()
 #endif
 }
 
-void TaskContainer::checkAttention(const Task::TaskPtr t)
+void TaskContainer::checkAttention(const TaskManager::Task *t)
 {
     bool attention = t ? t->demandsAttention() : false;
     if (attention && attentionState == -1) // was activated
@@ -256,8 +256,8 @@ void TaskContainer::checkAttention(const Task::TaskPtr t)
     }
     else if(!attention && attentionState >= 0)
     { // need to check all
-        Task::List::iterator itEnd = tasks.end();
-        for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+        QList<TaskManager::Task*>::iterator itEnd = tasks.end();
+        for (QList<TaskManager::Task*>::iterator it = tasks.begin(); it != itEnd; ++it)
         {
             if ((*it)->demandsAttention())
             {
@@ -298,7 +298,7 @@ void TaskContainer::resizeEvent( QResizeEvent * )
     iconRect = QStyle::visualRect( layoutDirection(), rect(), QRect(br.x() + 2, (height() - 16) / 2, 16, 16) );
 }
 
-void TaskContainer::add(Task::TaskPtr task)
+void TaskContainer::add(TaskManager::Task *task)
 {
     if (!task)
     {
@@ -318,12 +318,12 @@ void TaskContainer::add(Task::TaskPtr task)
     KickerTip::Client::updateTip();
     update();
 
-    connect(task.data(), SIGNAL(changed()), SLOT(taskChanged()));
-    connect(task.data(), SIGNAL(iconChanged()), SLOT(iconChanged()));
-    connect(task.data(), SIGNAL(activated()), SLOT(setLastActivated()));
+    connect(task, SIGNAL(changed()), SLOT(taskChanged()));
+    connect(task, SIGNAL(iconChanged()), SLOT(iconChanged()));
+    connect(task, SIGNAL(activated()), SLOT(setLastActivated()));
 }
 
-void TaskContainer::remove(Task::TaskPtr task)
+void TaskContainer::remove(TaskManager::Task *task)
 {
     if (!task)
     {
@@ -331,7 +331,7 @@ void TaskContainer::remove(Task::TaskPtr task)
     }
 
     task->publishIconGeometry(QRect());
-    for (Task::List::Iterator it = tasks.begin(); it != tasks.end(); ++it)
+    for (QList<TaskManager::Task*>::Iterator it = tasks.begin(); it != tasks.end(); ++it)
     {
         if ((*it) == task)
         {
@@ -353,7 +353,7 @@ void TaskContainer::remove(Task::TaskPtr task)
     update();
 }
 
-void TaskContainer::remove(Startup::StartupPtr startup)
+void TaskContainer::remove(TaskManager::Startup *startup)
 {
     if (!startup || startup != m_startup)
     {
@@ -370,14 +370,14 @@ void TaskContainer::remove(Startup::StartupPtr startup)
     }
 }
 
-bool TaskContainer::contains(Task::TaskPtr task)
+bool TaskContainer::contains(TaskManager::Task *task)
 {
     if (!task)
     {
         return false;
     }
 
-    for (Task::List::Iterator it = tasks.begin(); it != tasks.end(); ++it)
+    for (QList<TaskManager::Task*>::Iterator it = tasks.begin(); it != tasks.end(); ++it)
     {
         if ((*it) == task)
         {
@@ -388,15 +388,15 @@ bool TaskContainer::contains(Task::TaskPtr task)
     return false;
 }
 
-bool TaskContainer::contains(Startup::StartupPtr startup)
+bool TaskContainer::contains(TaskManager::Startup *startup)
 {
     return startup && (m_startup == startup);
 }
 
 bool TaskContainer::contains(WId win)
 {
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::iterator itEnd = tasks.end();
+    for (QList<TaskManager::Task*>::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         if ((*it)->window() == win)
         {
@@ -447,7 +447,7 @@ void TaskContainer::drawButton(QPainter *p)
     // get a pointer to the pixmap we're drawing on
     QPixmap *pm((QPixmap*)p->device());
     QPixmap pixmap; // icon
-    Task::TaskPtr task;
+    TaskManager::Task *task;
     bool iconified = !TaskBarSettings::showOnlyIconified();
     bool halo = TaskBarSettings::haloText();
     bool alwaysDrawButtons = TaskBarSettings::drawButtons();
@@ -459,8 +459,8 @@ void TaskContainer::drawButton(QPainter *p)
     // draw sunken if we contain the active task
     bool active = false;
     bool demandsAttention = false;
-    Task::List::iterator itEnd = m_filteredTasks.end();
-    for (Task::List::iterator it = m_filteredTasks.begin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::iterator itEnd = m_filteredTasks.end();
+    for (QList<TaskManager::Task*>::iterator it = m_filteredTasks.begin(); it != itEnd; ++it)
     {
         task = *it;
         if (iconified && !task->isIconified())
@@ -549,7 +549,7 @@ void TaskContainer::drawButton(QPainter *p)
     {
         if (pixmap.isNull() && m_startup)
         {
-            pixmap = SmallIcon(m_startup->icon());
+            pixmap = SmallIcon(m_startup->icon().name());
         }
 
         if ( !pixmap.isNull() )
@@ -792,8 +792,8 @@ QString TaskContainer::name()
     {
         // multiple tasks -> use the common part of all captions
         // if it is more descriptive than the class name
-        Task::List::iterator it = m_filteredTasks.begin();
-        Task::List::iterator itEnd = m_filteredTasks.end();
+        QList<TaskManager::Task*>::iterator it = m_filteredTasks.begin();
+        QList<TaskManager::Task*>::iterator itEnd = m_filteredTasks.end();
         const QString match = (*it)->visibleName();
         int length = match.length();
 
@@ -826,7 +826,7 @@ QString TaskContainer::name()
             text = match.left(length);
         }
     }
-    else if (m_startup && !m_startup->text().isEmpty())
+    else if (!m_startup && !m_startup->text().isEmpty())
     {
         // fall back to startup name
         text = m_startup->text();
@@ -973,8 +973,8 @@ void TaskContainer::performAction(int action)
     {
         // multiple tasks -> cycle list
         bool hasLastActivated = false;
-        Task::List::iterator itEnd = m_filteredTasks.end();
-        for (Task::List::iterator it = m_filteredTasks.begin(); it != itEnd; ++it)
+        QList<TaskManager::Task*>::iterator itEnd = m_filteredTasks.end();
+        for (QList<TaskManager::Task*>::iterator it = m_filteredTasks.begin(); it != itEnd; ++it)
         {
             if ((*it) == lastActivated)
             {
@@ -1049,8 +1049,8 @@ bool TaskContainer::activateNextTask(bool forward, bool& forcenext)
         return true;
     }
 
-    Task::List::iterator itEnd = m_filteredTasks.end();
-    for (Task::List::iterator it = m_filteredTasks.begin();
+    QList<TaskManager::Task*>::iterator itEnd = m_filteredTasks.end();
+    for (QList<TaskManager::Task*>::iterator it = m_filteredTasks.begin();
          it != itEnd;
          ++it)
     {
@@ -1161,15 +1161,15 @@ bool TaskContainer::startDrag(const QPoint& pos)
             setDown(false);
         }
 
-        TaskDrag* drag = new TaskDrag(m_filteredTasks, this);
+//         TaskDrag* drag = new TaskDrag(m_filteredTasks, this);
 
         if (!m_filteredTasks.isEmpty())
         {
             kDebug() << m_filteredTasks.first()->name();
-            drag->setPixmap(m_filteredTasks.first()->pixmap());
+//             drag->setPixmap(m_filteredTasks.first()->pixmap());
         }
 
-        drag->start();
+//         drag->start();
         return true;
     }
 
@@ -1255,10 +1255,10 @@ void TaskContainer::publishIconGeometry( QPoint global )
 {
     QPoint p = global + geometry().topLeft();
 
-    Task::List::const_iterator itEnd = tasks.constEnd();
-    for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = *it;
+        TaskManager::Task *t = *it;
         t->publishIconGeometry(QRect(p.x(), p.y(), width(), height()));
     }
 }
@@ -1266,7 +1266,7 @@ void TaskContainer::publishIconGeometry( QPoint global )
 void TaskContainer::dragEnterEvent( QDragEnterEvent* e )
 {
     // ignore task drags
-    if (TaskDrag::canDecode(e->mimeData()))
+//     if (TaskDrag::canDecode(e->mimeData()))
     {
         return;
     }
@@ -1346,10 +1346,10 @@ void TaskContainer::dragSwitch()
 int TaskContainer::desktop()
 {
     if ( tasks.isEmpty() )
-        return TaskManager::self()->currentDesktop();
+        return TaskManager::TaskManager::self()->currentDesktop();
 
     if ( tasks.count() > 1 )
-        return TaskManager::self()->numberOfDesktops();
+        return TaskManager::TaskManager::self()->numberOfDesktops();
 
     return tasks.first()->desktop();
 }
@@ -1366,10 +1366,10 @@ bool TaskContainer::onCurrentDesktop()
         return false;
     }
 
-    Task::List::const_iterator itEnd = tasks.constEnd();
-    for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = *it;
+        TaskManager::Task *t = *it;
         if (t->isOnCurrentDesktop())
         {
             return true;
@@ -1392,8 +1392,8 @@ bool TaskContainer::isOnScreen()
         return true;
     }
 
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::iterator itEnd = tasks.end();
+    for (QList<TaskManager::Task*>::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         if ((*it)->isOnScreen( screen ))
         {
@@ -1416,8 +1416,8 @@ bool TaskContainer::isIconified()
         return true;
     }
 
-    Task::List::const_iterator itEnd = tasks.constEnd();
-    for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
         if ((*it)->isIconified())
         {
@@ -1432,10 +1432,10 @@ void TaskContainer::updateFilteredTaskList()
 {
     m_filteredTasks.clear();
 
-    Task::List::const_iterator itEnd = tasks.constEnd();
-    for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = *it;
+        TaskManager::Task *t = *it;
         if ((taskBar->showAllWindows() || t->isOnCurrentDesktop()) &&
             (!TaskBarSettings::showOnlyIconified() || t->isIconified()))
         {
@@ -1450,14 +1450,14 @@ void TaskContainer::updateFilteredTaskList()
     // sort container list by desktop
     if (taskBar->sortByDesktop() && m_filteredTasks.count() > 1)
     {
-        QVector<QPair<int, Task::TaskPtr> > sorted;
+        QVector<QPair<int, TaskManager::Task*> > sorted;
         sorted.resize(m_filteredTasks.count());
         int i = 0;
 
-        Task::List::const_iterator itEnd = m_filteredTasks.constEnd();
-        for (Task::List::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
+        QList<TaskManager::Task*>::const_iterator itEnd = m_filteredTasks.constEnd();
+        for (QList<TaskManager::Task*>::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
         {
-            Task::TaskPtr t = *it;
+            TaskManager::Task *t = *it;
             sorted[i] = (qMakePair(t->desktop(), t));
             ++i;
         }
@@ -1465,7 +1465,7 @@ void TaskContainer::updateFilteredTaskList()
         qHeapSort(sorted);
 
         m_filteredTasks.clear();
-        for (QVector<QPair<int, Task::TaskPtr> >::iterator it = sorted.begin();
+        for (QVector<QPair<int, TaskManager::Task*> >::iterator it = sorted.begin();
              it != sorted.end();
              ++it)
         {
@@ -1480,7 +1480,7 @@ void TaskContainer::desktopChanged(int)
     update();
 }
 
-void TaskContainer::windowChanged(Task::TaskPtr)
+void TaskContainer::windowChanged(TaskManager::Task*)
 {
     updateFilteredTaskList();
     update();
@@ -1494,11 +1494,11 @@ void TaskContainer::settingsChanged()
 
 void TaskContainer::updateTipData(KickerTip::Data& data)
 {
-    if (m_startup)
+    if (m_startup != NULL)
     {
         data.message = m_startup->text();
         data.subtext = i18n("Loading application ...");
-        data.icon = KIconLoader::global()->loadIcon(m_startup->icon(),
+        data.icon = KIconLoader::global()->loadIcon(m_startup->icon().name(),
                                                     KIconLoader::Small,
                                                     KIconLoader::SizeMedium,
                                                     KIconLoader::DefaultState,
@@ -1510,9 +1510,9 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     if (TaskBarSettings::showThumbnails() &&
         m_filteredTasks.count() == 1)
     {
-        Task::TaskPtr t = m_filteredTasks.first();
+        TaskManager::Task *t = m_filteredTasks.first();
 
-        pixmap = t->thumbnail(TaskBarSettings::thumbnailMaxDimension());
+        pixmap = t->pixmap();
     }
 
     if (pixmap.isNull() && !tasks.isEmpty())
@@ -1529,10 +1529,10 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     bool demandsAttention = false;
     bool modified = false;
     bool allDesktops = false;
-    Task::List::const_iterator itEnd = m_filteredTasks.constEnd();
-    for (Task::List::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::const_iterator itEnd = m_filteredTasks.constEnd();
+    for (QList<TaskManager::Task*>::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = *it;
+        TaskManager::Task *t = *it;
         if (t->demandsAttention())
         {
             demandsAttention = true;
@@ -1551,7 +1551,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
         else if (!allDesktops)
         {
             desktopMap.insert(t->desktop(),
-                              TaskManager::self()->desktopName(t->desktop()));
+                              TaskManager::TaskManager::self()->desktopName(t->desktop()));
         }
     }
 

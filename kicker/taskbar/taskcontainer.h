@@ -36,8 +36,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QDragEnterEvent>
 #include <QMouseEvent>
 
+#include <taskmanager/startup.h>
+#include <taskmanager/taskitem.h>
+
 #include "kickertip.h"
-#include "taskmanager.h"
 
 class TaskBar;
 
@@ -51,8 +53,8 @@ public:
     typedef QList<TaskContainer*> List;
     typedef QList<TaskContainer*>::iterator Iterator;
 
-    TaskContainer(Task::TaskPtr, TaskBar*, QWidget *parent = 0);
-    TaskContainer(Startup::StartupPtr, PixmapList&, TaskBar*,
+    TaskContainer(TaskManager::Task*, TaskBar*, QWidget *parent = 0);
+    TaskContainer(TaskManager::Startup*, PixmapList&, TaskBar*,
                   QWidget *parent = 0);
     virtual ~TaskContainer();
 
@@ -60,12 +62,12 @@ public:
 
     void init();
 
-    void add(Task::TaskPtr);
-    void remove(Task::TaskPtr);
-    void remove(Startup::StartupPtr);
+    void add(TaskManager::Task*);
+    void remove(TaskManager::Task*);
+    void remove(TaskManager::Startup*);
 
-    bool contains(Task::TaskPtr);
-    bool contains(Startup::StartupPtr);
+    bool contains(TaskManager::Task*);
+    bool contains(TaskManager::Startup*);
     bool contains(WId);
 
     bool isEmpty();
@@ -81,7 +83,7 @@ public:
 
     void publishIconGeometry( QPoint );
     void desktopChanged( int );
-    void windowChanged(Task::TaskPtr);
+    void windowChanged(TaskManager::Task*);
     void settingsChanged();
     bool eventFilter( QObject *o, QEvent *e );
 
@@ -124,7 +126,7 @@ protected Q_SLOTS:
     void showMe();
 
 private:
-    void checkAttention(const Task::TaskPtr changed_task = Task::TaskPtr());
+    void checkAttention(const TaskManager::Task *changed_task = NULL);
     QString                     sid;
     QTimer                      animationTimer;
     QTimer                      dragSwitchTimer;
@@ -134,11 +136,11 @@ private:
     int                         attentionState;
     QRect                       iconRect;
     QPixmap                     animBg;
-    Task::List                  tasks;
-    Task::List                  m_filteredTasks;
-    Task::TaskPtr                   lastActivated;
+    QList<TaskManager::Task*>   tasks;
+    QList<TaskManager::Task*>   m_filteredTasks;
+    TaskManager::Task*          lastActivated;
     QMenu*                      m_menu;
-    Startup::StartupPtr                m_startup;
+    TaskManager::Startup*       m_startup;
     Qt::ArrowType               arrowType;
     TaskBar*                    taskBar;
     bool                        discardNextMouseEvent;
