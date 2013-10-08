@@ -1,10 +1,11 @@
-project(KDEBASE_WORKSPACE)
+project(KICKER)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
 #search packages used by KDE
 find_package(KDE4 REQUIRED)
+find_package(KDE4Workspace REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(Blitz REQUIRED)
 include (KDE4Defaults)

@@ -1,5 +1,6 @@
 
 add_subdirectory( systemtray ) 
+add_subdirectory( taskbar ) 
 add_subdirectory( run ) 
 add_subdirectory( naughty ) 
 add_subdirectory( lockout ) 
