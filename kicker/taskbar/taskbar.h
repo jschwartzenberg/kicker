@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __taskbar_h__
 
 #include <kpanelextension.h>
-#include <taskmanager.h>
+#include <taskmanager/taskmanager.h>
 
 #include "taskcontainer.h"
 #include "panner.h"
@@ -84,15 +84,15 @@ Q_SIGNALS:
     void containerCountChanged();
 
 protected Q_SLOTS:
-    void add(Task::TaskPtr);
-    void add(Startup::StartupPtr);
+    void add(TaskManager::Task*);
+    void add(TaskManager::Startup*);
     void showTaskContainer(TaskContainer*);
-    void remove(Task::TaskPtr task, TaskContainer *container = 0);
-    void remove(Startup::StartupPtr startup, TaskContainer *container = 0);
+    void remove(TaskManager::Task *task, TaskContainer *container = 0);
+    void remove(TaskManager::Startup *startup, TaskContainer *container = 0);
 
     void desktopChanged( int );
-    void windowChanged(Task::TaskPtr);
-    void windowChangedGeometry(Task::TaskPtr);
+    void windowChanged(TaskManager::Task*);
+    void windowChangedGeometry(TaskManager::Task*);
 
     void publishIconGeometry();
 
