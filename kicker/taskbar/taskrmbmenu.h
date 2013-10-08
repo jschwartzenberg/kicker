@@ -32,14 +32,14 @@ class KDE_EXPORT TaskRMBMenu : public QMenu
 	Q_OBJECT
 
 public:
-	explicit TaskRMBMenu(const Task::List&, bool showAll = true, QWidget *parent = 0);
-	explicit TaskRMBMenu(Task::TaskPtr, bool showAll = true, QWidget *parent = 0);
+	explicit TaskRMBMenu(const QList<TaskManager::Task*>, bool showAll = true, QWidget *parent = 0);
+	explicit TaskRMBMenu(TaskManager::Task*, bool showAll = true, QWidget *parent = 0);
 
 private:
-	void fillMenu(Task::TaskPtr);
+	void fillMenu(TaskManager::Task*);
 	void fillMenu();
-    QMenu* makeAdvancedMenu(Task::TaskPtr);
-	QMenu* makeDesktopsMenu(Task::TaskPtr);
+	QMenu* makeAdvancedMenu(TaskManager::Task*);
+	QMenu* makeDesktopsMenu(TaskManager::Task*);
 	QMenu* makeDesktopsMenu();
 
 private Q_SLOTS:
@@ -52,7 +52,7 @@ private Q_SLOTS:
 	void slotAllToCurrentDesktop();
 
 private:
-	Task::List tasks;
+	QList<TaskManager::Task*> tasks;
 	bool showAll;
 };
 

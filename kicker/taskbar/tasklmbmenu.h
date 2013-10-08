@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QDragMoveEvent>
 #include <QList>
 
-#include "taskmanager.h"
+#include "taskmanager/taskmanager.h"
 
 #ifdef __GNUC__
 #warning "Need custom menu item support, which isn't there in Qt4!"
@@ -70,7 +70,7 @@ class KDE_EXPORT TaskLMBMenu : public QMenu
     Q_OBJECT
 
 public:
-    explicit TaskLMBMenu(const Task::List& list, QWidget *parent = 0, const char *name = 0);
+    explicit TaskLMBMenu(const QList<TaskManager::Task*> list, QWidget *parent = 0, const char *name = 0);
 
 protected Q_SLOTS:
     void dragSwitch();
@@ -87,7 +87,7 @@ protected:
 private:
     void fillMenu();
 
-    Task::List m_tasks;
+    QList<TaskManager::Task*> m_tasks;
     int        m_lastDragId;
     bool       m_attentionState;
     QTimer*    m_attentionTimer;

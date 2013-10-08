@@ -98,7 +98,7 @@ QSize TaskMenuItem::sizeHint()
 
 /*****************************************************************************/
 
-TaskLMBMenu::TaskLMBMenu(const Task::List& tasks, QWidget *parent, const char *name)
+TaskLMBMenu::TaskLMBMenu(const QList<TaskManager::Task*> tasks, QWidget *parent, const char *name)
   : QMenu(parent),
     m_tasks(tasks),
     m_lastDragId(-1),
@@ -117,10 +117,10 @@ TaskLMBMenu::TaskLMBMenu(const Task::List& tasks, QWidget *parent, const char *n
 void TaskLMBMenu::fillMenu()
 {
 
-    Task::List::iterator itEnd = m_tasks.end();
-    for (Task::List::iterator it = m_tasks.begin(); it != itEnd; ++it)
+    QList<TaskManager::Task*>::iterator itEnd = m_tasks.end();
+    for (QList<TaskManager::Task*>::iterator it = m_tasks.begin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = (*it);
+        TaskManager::Task *t = (*it);
 
         QString text = t->visibleName().replace("&", "&&");
 
@@ -131,7 +131,7 @@ void TaskLMBMenu::fillMenu()
                                                   t->demandsAttention());*/
         //QAction* menuItem = 
         int id = insertItem(QIcon(t->pixmap()), text);
-        connectItem(id, t.data(), SLOT(activateRaiseOrIconify()));
+        connectItem(id, t, SLOT(activateRaiseOrIconify()));
         setItemChecked(id, t->isActive());
 
         if (t->demandsAttention())
@@ -170,10 +170,10 @@ void TaskLMBMenu::attentionTimeout()
 void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
 {
     // ignore task drags
-    if (TaskDrag::canDecode(e->mimeData()))
-    {
-        return;
-    }
+//     if (TaskDrag::canDecode(e->mimeData()))
+//     {
+//         return;
+//     }
 
     int id = static_cast<QMenuItem*>(actionAt(e->pos()))->id();
 
@@ -204,10 +204,10 @@ void TaskLMBMenu::dragLeaveEvent( QDragLeaveEvent* e )
 void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
 {
     // ignore task drags
-    if (TaskDrag::canDecode(e->mimeData()))
-    {
-        return;
-    }
+//     if (TaskDrag::canDecode(e->mimeData()))
+//     {
+//         return;
+//     }
 
     int id = static_cast<QMenuItem*>(actionAt(e->pos()))->id();
 
@@ -227,7 +227,7 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
 
 void TaskLMBMenu::dragSwitch()
 {
-    Task::TaskPtr t = m_tasks.at(indexOf(m_lastDragId));
+    TaskManager::Task *t = m_tasks.at(indexOf(m_lastDragId));
     if (t)
     {
         t->activate();
@@ -277,14 +277,14 @@ void TaskLMBMenu::mouseMoveEvent(QMouseEvent* e)
         int index = actions().indexOf(actionAt(e->pos()));
         if (index != -1)
         {
-            Task::TaskPtr task = m_tasks.at(index);
+            TaskManager::Task *task = m_tasks.at(index);
             if (task)
             {
-                Task::List tasks;
+                QList<TaskManager::Task*> tasks;
                 tasks.append(task);
-                TaskDrag* drag = new TaskDrag(tasks, this);
-                drag->setPixmap(task->pixmap());
-                drag->start();
+//                 TaskDrag* drag = new TaskDrag(tasks, this);
+//                 drag->setPixmap(task->pixmap());
+//                 drag->start();
             }
         }
     }
