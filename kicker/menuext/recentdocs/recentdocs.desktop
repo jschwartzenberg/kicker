@@ -94,6 +94,6 @@ Comment[wa]=Les documints ki vos avoz eployî i gn a waire
 Comment[x-test]=xxRecent documents you have usedxx
 Comment[zh_CN]=您最近使用过的文档
 Comment[zh_TW]=您最近使用過的文件選單
-Icon=document
+Icon=document-multiple
 
 X-KDE-Library=kickermenu_recentdocs

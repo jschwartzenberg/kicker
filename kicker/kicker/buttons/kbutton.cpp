@@ -45,7 +45,7 @@ KButton::KButton( QWidget* parent )
 
     setPopup(MenuManager::self()->kmenu());
     MenuManager::self()->registerKButton(this);
-    setIcon("kmenu");
+    setIcon("kde");
 
     if (KickerSettings::showKMenuText())
     {

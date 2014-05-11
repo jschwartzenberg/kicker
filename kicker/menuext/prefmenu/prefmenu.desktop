@@ -94,6 +94,6 @@ Comment[wa]=Accès åjhey åzès modules do cinte di controle
 Comment[x-test]=xxEasy access to the Control Center modulesxx
 Comment[zh_CN]=轻松访问控制中心模块
 Comment[zh_TW]=簡易使用控制中心模組
-Icon=package_settings
+Icon=preferences-system
 
 X-KDE-Library=kickermenu_prefmenu

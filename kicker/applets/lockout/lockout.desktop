@@ -82,5 +82,5 @@ Comment[vi]=Thêm nút khoá màn hình và đăng xuất khỏi phiên chạy
 Comment[x-test]=xxAdds buttons for locking screen and session logoutxx
 Comment[zh_CN]=添加锁定屏幕和注销会话的按钮
 Comment[zh_TW]=加入用來鎖定螢幕與登出作業階段的按鈕
-Icon=exit
+Icon=system-shutdown
 X-KDE-Library=lockout_panelapplet

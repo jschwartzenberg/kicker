@@ -112,5 +112,5 @@ Comment[wa]=On boton ki potche abeye sol sicribanne cwand on l' tchôke
 Comment[x-test]=xxA button that gives quick access to the desktop when pressedxx
 Comment[zh_CN]=按下可快速访问桌面的按钮
 Comment[zh_TW]=按下去能快速顯示桌面的按鈕
-Icon=desktop
+Icon=user-desktop
 X-KDE-Library=DesktopButton

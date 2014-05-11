@@ -92,6 +92,6 @@ Comment[wa]=Accès åjhey åzès ridants rantoele
 Comment[x-test]=xxEasy access to network foldersxx
 Comment[zh_CN]=轻松访问网络文件夹
 Comment[zh_TW]=網路資料夾選單
-Icon=network
+Icon=folder-network
 
 X-KDE-Library=kickermenu_remotemenu

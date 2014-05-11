@@ -94,5 +94,5 @@ Comment[vi]=Tiểu dụng trên bảng điểu khiển chứa thanh tác vụ m�
 Comment[x-test]=xxThe default taskbar panel appletxx
 Comment[zh_CN]=默认的任务栏面板小程序
 Comment[zh_TW]=預設工作列面板小程式。
-Icon=taskbar
+Icon=preferences-system-windows
 X-KDE-Library=taskbar_panelapplet

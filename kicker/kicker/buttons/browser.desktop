@@ -111,5 +111,5 @@ Comment[wa]=On menu ki håynêye li djivêye des fitchîs k' i gn a dins on rid
 Comment[x-test]=xxA menu that lists files in a given folderxx
 Comment[zh_CN]=列出给定文件夹中文件的菜单
 Comment[zh_TW]=列出所選資料夾中檔案的選單
-Icon=kdisknav
+Icon=folder
 X-KDE-Library=BrowserButton

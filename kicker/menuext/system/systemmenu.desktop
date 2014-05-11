@@ -86,6 +86,6 @@ Comment[vi]=Truy cập dễ vào các nơi hệ thống
 Comment[x-test]=xxEasy access to system placesxx
 Comment[zh_CN]=轻松访问系统位置
 Comment[zh_TW]=系統選單
-Icon=system
+Icon=computer
 
 X-KDE-Library=kickermenu_systemmenu

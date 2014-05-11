@@ -47,7 +47,7 @@ BookmarksButton::BookmarksButton(QWidget* parent)
     setPopup(bookmarkParent);
     this->setToolTip( i18n("Bookmarks"));
     setTitle(i18n("Bookmarks"));
-    setIcon("bookmark");
+    setIcon("bookmarks");
 }
 
 BookmarksButton::~BookmarksButton()

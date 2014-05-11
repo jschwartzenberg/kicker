@@ -47,7 +47,7 @@ DesktopButton::DesktopButton( QWidget* parent )
 
     this->setToolTip( i18n("Show desktop"));
     setTitle(i18n("Desktop Access"));
-    setIcon("desktop");
+    setIcon("user-desktop");
 
     connect( this, SIGNAL(toggled(bool)), this, SLOT(showDesktop(bool)) );
     connect( ShowDesktop::self(), SIGNAL(desktopShown(bool)), this, SLOT(toggle(bool)) );

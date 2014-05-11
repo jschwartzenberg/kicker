@@ -90,5 +90,5 @@ Comment[x-test]=xxA command line appletxx
 Comment[zh_CN]=命令行小程序
 Comment[zh_TW]=一個命令列的小程式
 Icon=exec
-X-KDE-Library=run_panelapplet
+X-KDE-Library=system-run
 X-KDE-UniqueApplet=true

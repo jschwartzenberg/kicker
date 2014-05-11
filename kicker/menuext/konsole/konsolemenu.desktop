@@ -93,7 +93,7 @@ Comment[wa]=Enonder l' terminå directumint avou ene session ou ene rimåke
 Comment[x-test]=xxDirectly start terminal emulator with a session or bookmarkxx
 Comment[zh_CN]=以会话或书签直接启动终端模拟器
 Comment[zh_TW]=用來啟動作業階段和書籤的終端機模擬程式的選單
-Icon=konsole
+Icon=utilities-terminal
 
 X-KDE-Library=kickermenu_konsole
 X-KDE-AuthorizeAction=shell_access

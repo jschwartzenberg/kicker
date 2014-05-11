@@ -115,5 +115,5 @@ Comment[wa]=On menu ki håynêye li djivêye di tos les purneas d' drovous
 Comment[x-test]=xxA menu that lists all open windowsxx
 Comment[zh_CN]=列出打开的全部窗口的菜单
 Comment[zh_TW]=一個列出所有開啟視窗的選單
-Icon=window_list
+Icon=preferences-system-windows
 X-KDE-Library=WindowListButton
