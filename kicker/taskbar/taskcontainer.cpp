@@ -152,10 +152,10 @@ void TaskContainer::stopTimers()
     attentionTimer.stop();
 }
 
-void TaskContainer::taskChanged()
+void TaskContainer::taskChanged(::TaskManager::TaskChanges change)
 {
     const QObject* source = sender();
-    TaskManager::Task *task;
+    ::TaskManager::Task *task;
     QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
     for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
@@ -178,7 +178,7 @@ void TaskContainer::taskChanged()
 void TaskContainer::iconChanged()
 {
     const QObject* source = sender();
-    TaskManager::Task* task;
+    ::TaskManager::Task* task;
     QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
     for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
@@ -205,7 +205,7 @@ void TaskContainer::setLastActivated()
     QList<TaskManager::Task*>::const_iterator itEnd = m_filteredTasks.constEnd();
     for (QList<TaskManager::Task*>::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
     {
-        TaskManager::Task *t = *it;
+        ::TaskManager::Task *t = *it;
         if ( t->isActive() )
         {
             lastActivated = t;
@@ -246,7 +246,7 @@ void TaskContainer::animationTimerFired()
 #endif
 }
 
-void TaskContainer::checkAttention(const TaskManager::Task *t)
+void TaskContainer::checkAttention(const ::TaskManager::Task *t)
 {
     bool attention = t ? t->demandsAttention() : false;
     if (attention && attentionState == -1) // was activated
@@ -298,7 +298,7 @@ void TaskContainer::resizeEvent( QResizeEvent * )
     iconRect = QStyle::visualRect( layoutDirection(), rect(), QRect(br.x() + 2, (height() - 16) / 2, 16, 16) );
 }
 
-void TaskContainer::add(TaskManager::Task *task)
+void TaskContainer::add(::TaskManager::Task *task)
 {
     if (!task)
     {
@@ -318,12 +318,12 @@ void TaskContainer::add(TaskManager::Task *task)
     KickerTip::Client::updateTip();
     update();
 
-    connect(task, SIGNAL(changed()), SLOT(taskChanged()));
-    connect(task, SIGNAL(iconChanged()), SLOT(iconChanged()));
+    connect(task, SIGNAL(changed(::TaskManager::TaskChanges)), SLOT(taskChanged(::TaskManager::TaskChanges)));
+//     connect(task, SIGNAL(iconChanged()), SLOT(iconChanged()));
     connect(task, SIGNAL(activated()), SLOT(setLastActivated()));
 }
 
-void TaskContainer::remove(TaskManager::Task *task)
+void TaskContainer::remove(::TaskManager::Task *task)
 {
     if (!task)
     {
@@ -370,7 +370,7 @@ void TaskContainer::remove(TaskManager::Startup *startup)
     }
 }
 
-bool TaskContainer::contains(TaskManager::Task *task)
+bool TaskContainer::contains(::TaskManager::Task *task)
 {
     if (!task)
     {
@@ -447,7 +447,7 @@ void TaskContainer::drawButton(QPainter *p)
     // get a pointer to the pixmap we're drawing on
     QPixmap *pm((QPixmap*)p->device());
     QPixmap pixmap; // icon
-    TaskManager::Task *task;
+    ::TaskManager::Task *task;
     bool iconified = !TaskBarSettings::showOnlyIconified();
     bool halo = TaskBarSettings::haloText();
     bool alwaysDrawButtons = TaskBarSettings::drawButtons();
@@ -515,7 +515,7 @@ void TaskContainer::drawButton(QPainter *p)
     }
 
     // get the task icon
-    if (task)
+    if (task && !m_startup) // not sure whether adding the && !m_startup is the right way to resolve this
     {
         pixmap = task->pixmap();
     }
@@ -1258,7 +1258,7 @@ void TaskContainer::publishIconGeometry( QPoint global )
     QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
     for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        TaskManager::Task *t = *it;
+        ::TaskManager::Task *t = *it;
         t->publishIconGeometry(QRect(p.x(), p.y(), width(), height()));
     }
 }
@@ -1369,7 +1369,7 @@ bool TaskContainer::onCurrentDesktop()
     QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
     for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        TaskManager::Task *t = *it;
+        ::TaskManager::Task *t = *it;
         if (t->isOnCurrentDesktop())
         {
             return true;
@@ -1435,7 +1435,7 @@ void TaskContainer::updateFilteredTaskList()
     QList<TaskManager::Task*>::const_iterator itEnd = tasks.constEnd();
     for (QList<TaskManager::Task*>::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        TaskManager::Task *t = *it;
+        ::TaskManager::Task *t = *it;
         if ((taskBar->showAllWindows() || t->isOnCurrentDesktop()) &&
             (!TaskBarSettings::showOnlyIconified() || t->isIconified()))
         {
@@ -1450,14 +1450,14 @@ void TaskContainer::updateFilteredTaskList()
     // sort container list by desktop
     if (taskBar->sortByDesktop() && m_filteredTasks.count() > 1)
     {
-        QVector<QPair<int, TaskManager::Task*> > sorted;
+        QVector<QPair<int, ::TaskManager::Task*> > sorted;
         sorted.resize(m_filteredTasks.count());
         int i = 0;
 
         QList<TaskManager::Task*>::const_iterator itEnd = m_filteredTasks.constEnd();
         for (QList<TaskManager::Task*>::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
         {
-            TaskManager::Task *t = *it;
+            ::TaskManager::Task *t = *it;
             sorted[i] = (qMakePair(t->desktop(), t));
             ++i;
         }
@@ -1465,7 +1465,7 @@ void TaskContainer::updateFilteredTaskList()
         qHeapSort(sorted);
 
         m_filteredTasks.clear();
-        for (QVector<QPair<int, TaskManager::Task*> >::iterator it = sorted.begin();
+        for (QVector<QPair<int, ::TaskManager::Task*> >::iterator it = sorted.begin();
              it != sorted.end();
              ++it)
         {
@@ -1480,7 +1480,7 @@ void TaskContainer::desktopChanged(int)
     update();
 }
 
-void TaskContainer::windowChanged(TaskManager::Task*)
+void TaskContainer::windowChanged(::TaskManager::Task*)
 {
     updateFilteredTaskList();
     update();
@@ -1510,7 +1510,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     if (TaskBarSettings::showThumbnails() &&
         m_filteredTasks.count() == 1)
     {
-        TaskManager::Task *t = m_filteredTasks.first();
+        ::TaskManager::Task *t = m_filteredTasks.first();
 
         pixmap = t->pixmap();
     }
@@ -1532,7 +1532,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     QList<TaskManager::Task*>::const_iterator itEnd = m_filteredTasks.constEnd();
     for (QList<TaskManager::Task*>::const_iterator it = m_filteredTasks.constBegin(); it != itEnd; ++it)
     {
-        TaskManager::Task *t = *it;
+        ::TaskManager::Task *t = *it;
         if (t->demandsAttention())
         {
             demandsAttention = true;

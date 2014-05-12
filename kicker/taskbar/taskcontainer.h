@@ -53,8 +53,8 @@ public:
     typedef QList<TaskContainer*> List;
     typedef QList<TaskContainer*>::iterator Iterator;
 
-    TaskContainer(TaskManager::Task*, TaskBar*, QWidget *parent = 0);
-    TaskContainer(TaskManager::Startup*, PixmapList&, TaskBar*,
+    TaskContainer(::TaskManager::Task*, TaskBar*, QWidget *parent = 0);
+    TaskContainer(::TaskManager::Startup*, PixmapList&, TaskBar*,
                   QWidget *parent = 0);
     virtual ~TaskContainer();
 
@@ -62,12 +62,12 @@ public:
 
     void init();
 
-    void add(TaskManager::Task*);
-    void remove(TaskManager::Task*);
-    void remove(TaskManager::Startup*);
+    void add(::TaskManager::Task*);
+    void remove(::TaskManager::Task*);
+    void remove(::TaskManager::Startup*);
 
-    bool contains(TaskManager::Task*);
-    bool contains(TaskManager::Startup*);
+    bool contains(::TaskManager::Task*);
+    bool contains(::TaskManager::Startup*);
     bool contains(WId);
 
     bool isEmpty();
@@ -83,7 +83,7 @@ public:
 
     void publishIconGeometry( QPoint );
     void desktopChanged( int );
-    void windowChanged(TaskManager::Task*);
+    void windowChanged(::TaskManager::Task*);
     void settingsChanged();
     bool eventFilter( QObject *o, QEvent *e );
 
@@ -122,7 +122,7 @@ protected Q_SLOTS:
     void dragSwitch();
     void iconChanged();
     void setLastActivated();
-    void taskChanged();
+    void taskChanged(::TaskManager::TaskChanges);
     void showMe();
 
 private:
@@ -138,9 +138,9 @@ private:
     QPixmap                     animBg;
     QList<TaskManager::Task*>   tasks;
     QList<TaskManager::Task*>   m_filteredTasks;
-    TaskManager::Task*          lastActivated;
+    ::TaskManager::Task*        lastActivated;
     QMenu*                      m_menu;
-    TaskManager::Startup*       m_startup;
+    ::TaskManager::Startup*     m_startup;
     Qt::ArrowType               arrowType;
     TaskBar*                    taskBar;
     bool                        discardNextMouseEvent;

@@ -84,15 +84,15 @@ Q_SIGNALS:
     void containerCountChanged();
 
 protected Q_SLOTS:
-    void add(TaskManager::Task*);
-    void add(TaskManager::Startup*);
+    void add(::TaskManager::Task*);
+    void add(::TaskManager::Startup*);
     void showTaskContainer(TaskContainer*);
-    void remove(TaskManager::Task *task, TaskContainer *container = 0);
-    void remove(TaskManager::Startup *startup, TaskContainer *container = 0);
+    void remove(::TaskManager::Task *task, TaskContainer *container = 0);
+    void remove(::TaskManager::Startup *startup, TaskContainer *container = 0);
 
     void desktopChanged( int );
-    void windowChanged(TaskManager::Task*);
-    void windowChangedGeometry(TaskManager::Task*);
+    void windowChanged(::TaskManager::Task* task, ::TaskManager::TaskChanges changes);
+    void windowChangedGeometry(::TaskManager::Task*);
 
     void publishIconGeometry();
 

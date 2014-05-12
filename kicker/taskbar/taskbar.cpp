@@ -100,18 +100,18 @@ TaskBar::TaskBar( QWidget *parent )
     configure();
 
     // connect manager
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskManager::Task)),
-            this, SLOT(add(TaskManager::Task)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(Task::Task)),
-            this, SLOT(remove(TaskManager::Task)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(TaskManager::Startup)),
-            this, SLOT(add(TaskManager::Startup)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(TaskManager::Startup)),
-            this, SLOT(remove(TaskManager::Startup)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(::TaskManager::Task*)),
+            this, SLOT(add(::TaskManager::Task*)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(::TaskManager::Task*)),
+            this, SLOT(remove(::TaskManager::Task*)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(::TaskManager::Startup*)),
+            this, SLOT(add(::TaskManager::Startup*)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(::TaskManager::Startup*)),
+            this, SLOT(remove(::TaskManager::Startup*)));
     connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
             this, SLOT(desktopChanged(int)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskManager::Task)),
-            this, SLOT(windowChanged(TaskManager::TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(::TaskManager::Task*, ::TaskManager::TaskChanges)),
+            this, SLOT(windowChanged(::TaskManager::Task*, ::TaskManager::TaskChanges)));
 #ifdef __GNUC__
 #warning dcop signal
 #endif
@@ -123,13 +123,13 @@ TaskBar::TaskBar( QWidget *parent )
     isGrouping = shouldGroup();
 
     // register existant tasks
-    foreach (TaskManager::Task *task, TaskManager::TaskManager::self()->tasks())
+    foreach (::TaskManager::Task *task, TaskManager::TaskManager::self()->tasks())
     {
         add(task);
     }
 
     // register existant startups
-    foreach (TaskManager::Startup *startup, TaskManager::TaskManager::self()->startups())
+    foreach (::TaskManager::Startup *startup, TaskManager::TaskManager::self()->startups())
     {
         add(startup);
     }
@@ -300,10 +300,10 @@ void TaskBar::configure()
     {
         // disconnect first in case we've been here before
         // to avoid multiple connections
-        disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskManager::Task)),
-                    this, SLOT(windowChangedGeometry(TaskManager::Task)));
-        connect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskManager::Task)),
-                 this, SLOT(windowChangedGeometry(TaskManager::Task)));
+        disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(::TaskManager::Task*)),
+                    this, SLOT(windowChangedGeometry(::TaskManager::Task*)));
+        connect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(::TaskManager::Task*)),
+                 this, SLOT(windowChangedGeometry(::TaskManager::Task*)));
         TaskManager::TaskManager::self()->trackGeometry();
     }
 
@@ -355,7 +355,7 @@ void TaskBar::resizeEvent( QResizeEvent* e )
     }
 }
 
-void TaskBar::add(TaskManager::Task *task)
+void TaskBar::add(::TaskManager::Task *task)
 {
     if (!task ||
         (m_showOnlyCurrentScreen &&
@@ -399,7 +399,7 @@ void TaskBar::add(TaskManager::Task *task)
     showTaskContainer(container);
 }
 
-void TaskBar::add(TaskManager::Startup *startup)
+void TaskBar::add(::TaskManager::Startup *startup)
 {
     if (!startup)
     {
@@ -482,7 +482,7 @@ void TaskBar::showTaskContainer(TaskContainer* container)
     }
 }
 
-void TaskBar::remove(TaskManager::Task* task, TaskContainer* container)
+void TaskBar::remove(::TaskManager::Task* task, TaskContainer* container)
 {
     for (TaskContainer::Iterator it = m_hiddenContainers.begin();
          it != m_hiddenContainers.end();
@@ -539,7 +539,7 @@ void TaskBar::remove(TaskManager::Task* task, TaskContainer* container)
     }
 }
 
-void TaskBar::remove(TaskManager::Startup* startup, TaskContainer* container)
+void TaskBar::remove(::TaskManager::Startup* startup, TaskContainer* container)
 {
     for (TaskContainer::Iterator it = m_hiddenContainers.begin();
          it != m_hiddenContainers.end();
@@ -615,7 +615,7 @@ void TaskBar::desktopChanged(int desktop)
     reLayout();
 }
 
-void TaskBar::windowChanged(TaskManager::Task *task)
+void TaskBar::windowChanged(TaskManager::Task *task, ::TaskManager::TaskChanges changes)
 {
     if (m_showOnlyCurrentScreen &&
         !TaskManager::TaskManager::isOnScreen(showScreen(), task->window()))
@@ -652,7 +652,7 @@ void TaskBar::windowChanged(TaskManager::Task *task)
     reLayout();
 }
 
-void TaskBar::windowChangedGeometry(TaskManager::Task *task)
+void TaskBar::windowChangedGeometry(::TaskManager::Task *task)
 {
     //TODO: this gets called every time a window's geom changes
     //      when we are in "show only on the same Xinerama screen"
@@ -944,7 +944,7 @@ void TaskBar::reGroup()
     qDeleteAll(containers);
     containers.clear();
 
-    foreach (TaskManager::Task *task, TaskManager::TaskManager::self()->tasks())
+    foreach (::TaskManager::Task *task, TaskManager::TaskManager::self()->tasks())
     {
         if (showScreen() == -1 || task->isOnScreen(showScreen()))
         {
