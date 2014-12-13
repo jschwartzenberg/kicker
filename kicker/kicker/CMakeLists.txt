@@ -22,7 +22,7 @@ set(kicker_KDEINIT_SRCS ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS} ${libkick
 
 kde4_add_kdeinit_executable( kicker ${kicker_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kicker  kickermain ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBRARY} kworkspace konq )
+target_link_libraries(kdeinit_kicker  kickermain ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBRARY} ${X11_LIBRARIES} kworkspace konq )
 
 install(TARGETS kdeinit_kicker  DESTINATION ${LIB_INSTALL_DIR} )
 
