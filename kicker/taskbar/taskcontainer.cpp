@@ -295,7 +295,7 @@ void TaskContainer::resizeEvent( QResizeEvent * )
     QStyleOption bOpt;
     bOpt.init(this);
     QRect br( style()->subElementRect( QStyle::SE_PushButtonContents, &bOpt, this ) );
-    iconRect = QStyle::visualRect( layoutDirection(), rect(), QRect(br.x() - 10, (height() - 16) / 2, 16, 16) );
+    iconRect = QStyle::visualRect( layoutDirection(), rect(), QRect(br.x() + 2, (height() - 16) / 2, 16, 16) );
 }
 
 void TaskContainer::add(::TaskManager::Task *task)
@@ -579,7 +579,7 @@ void TaskContainer::drawButton(QPainter *p)
     // modified overlay
     static QString modStr = '[' + i18n( "modified" ) + ']';
     int modStrPos = text.indexOf( modStr );
-    int textPos = ( taskBar->showIcon() && !pixmap.isNull() ) ? -10 + 16 + 2 : 0;
+    int textPos = ( taskBar->showIcon() && !pixmap.isNull() ) ? 2 + 16 + 2 : 0;
 
     if (modStrPos >= 0)
     {
