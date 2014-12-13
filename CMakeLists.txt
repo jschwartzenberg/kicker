@@ -27,6 +27,7 @@ include_directories(
     ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/taskbar
     ${CMAKE_CURRENT_SOURCE_DIR}/libs
 )
 # libs
