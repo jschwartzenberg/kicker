@@ -38,12 +38,12 @@
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
 
-kSubMenuItem::kSubMenuItem(QListView* parent,
+kSubMenuItem::kSubMenuItem(Q3ListView* parent,
                            const QString& visibleName,
                            const QString& desktopFile,
                            const QPixmap& icon,
                            bool checked)
-    : QCheckListItem(parent, visibleName, QCheckListItem::CheckBox),
+    : Q3CheckListItem(parent, visibleName, Q3CheckListItem::CheckBox),
       m_desktopFile(desktopFile)
 {
     setPixmap(0, icon);
@@ -68,15 +68,15 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     // connections
     connect(m_editKMenuButton, SIGNAL(clicked()), SLOT(launchMenuEditor()));
 
-    m_browserGroupLayout->setColumnStretch( 1, 1 );
-    m_pRecentOrderGroupLayout->setColumnStretch( 1, 1 );
+    m_browserGroup->setColumnLayout( 1, Qt::Horizontal );
+    m_pRecentOrderGroup->setColumnLayout( 1, Qt::Horizontal );
 }
 
 void MenuTab::load()
 {
-    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::self()->configName());
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::the()->configName());
 
-    c->setGroup("menus");
+    KConfigGroup cg(c, "menus");
 
     m_subMenus->clear();
 
@@ -85,7 +85,7 @@ void MenuTab::load()
                                       i18n("Bookmarks"),
                                       QString(),
                                       SmallIcon("bookmark"),
-                                      c->readEntry("UseBookmarks", true));
+                                      cg.readEntry("UseBookmarks", true));
     connect(m_bookmarkMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     // show the quick menus menu?
@@ -93,10 +93,10 @@ void MenuTab::load()
                                           i18n("Quick Browser"),
                                           QString(),
                                           SmallIcon("kdisknav"),
-                                          c->readEntry("UseBrowser", true));
+                                          cg.readEntry("UseBrowser", true));
     connect(m_quickBrowserMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
-    QStringList ext = c->readEntry("Extensions", QStringList());
+    QStringList ext = cg.readEntry("Extensions", QStringList());
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
     kSubMenuItem* menuItem(0);
     for (QStringList::ConstIterator dit=dirs.begin(); dit!=dirs.end(); ++dit)
@@ -105,7 +105,7 @@ void MenuTab::load()
         QStringList av = d.entryList();
         for (QStringList::ConstIterator it=av.begin(); it!=av.end(); ++it)
         {
-            KDesktopFile df(d.absoluteFilePath(*it), true);
+            KDesktopFile df(d.absoluteFilePath(*it));
             menuItem = new kSubMenuItem(m_subMenus,
                                         df.readName(),
                                         *it,
@@ -120,37 +120,37 @@ void MenuTab::load()
 
 void MenuTab::save()
 {
-    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::self()->configName());
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::the()->configName());
 
-    c->setGroup("menus");
+    KConfigGroup cg(c, "menus");
 
     QStringList ext;
-    QListViewItem *item(0);
+    Q3ListViewItem *item(0);
     for (item = m_subMenus->firstChild(); item; item = item->nextSibling())
     {
         bool isOn = static_cast<kSubMenuItem*>(item)->isOn();
         if (item == m_bookmarkMenu)
         {
-            c->writeEntry("UseBookmarks", isOn);
+            cg.writeEntry("UseBookmarks", isOn);
         }
         else if (item == m_quickBrowserMenu)
         {
-            c->writeEntry("UseBrowser", isOn);
+            cg.writeEntry("UseBrowser", isOn);
         }
         else if (isOn)
         {
             ext << static_cast<kSubMenuItem*>(item)->desktopFile();
         }
     }
-    c->writeEntry("Extensions", ext);
+    cg.writeEntry("Extensions", ext);
 
-    c->sync();
+    cg.sync();
 }
 
 void MenuTab::defaults()
 {
     //disable all
-    QListViewItem *item(0);
+    Q3ListViewItem *item(0);
     for (item = m_subMenus->firstChild(); item; item = item->nextSibling())
     {
          static_cast<kSubMenuItem*>( item )->setOn( false );

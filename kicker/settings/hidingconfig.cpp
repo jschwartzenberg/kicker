@@ -29,21 +29,21 @@
 #include "hidingconfig.moc"
 
 HidingConfig::HidingConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : KCModule(KComponentData(name), parent)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     m_widget = new HidingTab(this);
     layout->addWidget(m_widget);
     layout->addStretch();
 
-    setQuickHelp(KickerConfig::self()->quickHelp());
-    setAboutData(KickerConfig::self()->aboutData());
+    setQuickHelp(KickerConfig::the()->quickHelp());
+    setAboutData(KickerConfig::the()->aboutData());
 
-    //addConfig(KickerSettings::self(), m_widget);
+    //addConfig(KickerSettings::the(), m_widget);
 
     connect(m_widget, SIGNAL(changed()),
             this, SLOT(changed()));
-    connect(KickerConfig::self(), SIGNAL(aboutToNotifyKicker()),
+    connect(KickerConfig::the(), SIGNAL(aboutToNotifyKicker()),
             this, SLOT(aboutToNotifyKicker()));
 
     load();
@@ -79,7 +79,7 @@ void HidingConfig::save()
     // KickerConfig object sends a signal before the
     // notification. On this signal all existing modules,
     // including this object, save their settings.
-    KickerConfig::self()->notifyKicker();
+    KickerConfig::the()->notifyKicker();
 }
 
 void HidingConfig::defaults()

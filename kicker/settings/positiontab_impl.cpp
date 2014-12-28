@@ -21,6 +21,7 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDesktopWidget>
 #include <QLabel>
 #include <QPushButton>
 #include <QSlider>
@@ -37,7 +38,7 @@
 #include <kwindowsystem.h>
 
 #include "main.h"
-#include "../background/bgrender.h"
+#include "bgrender.h"
 
 #include "positiontab_impl.h"
 #include "positiontab_impl.moc"
@@ -58,7 +59,7 @@ PositionTab::PositionTab(QWidget *parent, const char* name)
     m_panelPos(PosBottom),
     m_panelAlign(AlignLeft)
 {
-    QPixmap monitor(locate("data", "kcontrol/pics/monitor.png"));
+    QPixmap monitor(KStandardDirs::locate("data", "kcontrol/pics/monitor.png"));
     m_monitorImage->setPixmap(monitor);
     m_monitorImage->setFixedSize(m_monitorImage->sizeHint());
 
@@ -135,21 +136,21 @@ PositionTab::PositionTab(QWidget *parent, const char* name)
     connect(m_desktopPreview, SIGNAL(imageDone(int)),
             SLOT(slotBGPreviewReady(int)));
 
-    connect(KickerConfig::self(), SIGNAL(extensionInfoChanged()),
+    connect(KickerConfig::the(), SIGNAL(extensionInfoChanged()),
             SLOT(infoUpdated()));
-    connect(KickerConfig::self(), SIGNAL(extensionAdded(ExtensionInfo*)),
+    connect(KickerConfig::the(), SIGNAL(extensionAdded(ExtensionInfo*)),
             SLOT(extensionAdded(ExtensionInfo*)));
-    connect(KickerConfig::self(), SIGNAL(extensionRemoved(ExtensionInfo*)),
+    connect(KickerConfig::the(), SIGNAL(extensionRemoved(ExtensionInfo*)),
             SLOT(extensionRemoved(ExtensionInfo*)));
-    connect(KickerConfig::self(), SIGNAL(extensionChanged(const QString&)),
+    connect(KickerConfig::the(), SIGNAL(extensionChanged(const QString&)),
             SLOT(extensionChanged(const QString&)));
-    connect(KickerConfig::self(), SIGNAL(extensionAboutToChange(const QString&)),
+    connect(KickerConfig::the(), SIGNAL(extensionAboutToChange(const QString&)),
             SLOT(extensionAboutToChange(const QString&)));
     // position tab tells hiding tab about extension selections and vice versa
-    connect(KickerConfig::self(), SIGNAL(hidingPanelChanged(int)),
+    connect(KickerConfig::the(), SIGNAL(hidingPanelChanged(int)),
             SLOT(jumpToPanel(int)));
     connect(m_panelList, SIGNAL(activated(int)),
-            KickerConfig::self(), SIGNAL(positionPanelChanged(int)));
+            KickerConfig::the(), SIGNAL(positionPanelChanged(int)));
 
     connect(m_panelSize, SIGNAL(activated(int)),
             SLOT(sizeChanged(int)));
@@ -165,10 +166,10 @@ PositionTab::~PositionTab()
 void PositionTab::load()
 {
     m_panelInfo = 0;
-    KickerConfig::self()->populateExtensionInfoList(m_panelList);
+    KickerConfig::the()->populateExtensionInfoList(m_panelList);
     m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 
-    switchPanel(KickerConfig::self()->currentPanelIndex());
+    switchPanel(KickerConfig::the()->currentPanelIndex());
     m_desktopPreview->setPreview(m_pretendDesktop->size());
     m_desktopPreview->start();
 }
@@ -182,7 +183,7 @@ void PositionTab::extensionAdded(ExtensionInfo* info)
 void PositionTab::save()
 {
     storeInfo();
-    KickerConfig::self()->saveExtentionInfo();
+    KickerConfig::the()->saveExtentionInfo();
 }
 
 void PositionTab::defaults()
@@ -204,16 +205,16 @@ void PositionTab::defaults()
         m_panelAlign = AlignLeft;
     }
 
-    m_panelSize->setCurrentItem(KPanelExtension::SizeNormal);
+    m_panelSize->setCurrentItem(Plasma::SizeNormal);
 
     // update the magic drawing
     lengthenPanel(-1);
-    switchPanel(KickerConfig::self()->currentPanelIndex());
+    switchPanel(KickerConfig::the()->currentPanelIndex());
 }
 
 void PositionTab::sizeChanged(int which)
 {
-    bool custom = which == KPanelExtension::SizeCustom;
+    bool custom = which == Plasma::SizeCustom;
     m_customSlider->setEnabled(custom);
     m_customSpinbox->setEnabled(custom);
 }
@@ -360,14 +361,14 @@ void PositionTab::lengthenPanel(int sizePercent)
 
     switch (m_panelSize->currentItem())
     {
-        case KPanelExtension::SizeTiny:
-        case KPanelExtension::SizeSmall:
+        case Plasma::SizeTiny:
+        case Plasma::SizeSmall:
             panelSize = panelSize * 3 / 2;
             break;
-        case KPanelExtension::SizeNormal:
+        case Plasma::SizeNormal:
             panelSize *= 2;
             break;
-        case KPanelExtension::SizeLarge:
+        case Plasma::SizeLarge:
             panelSize = panelSize * 5 / 2;
             break;
         default:
@@ -506,12 +507,12 @@ void PositionTab::slotBGPreviewReady(int)
 void PositionTab::switchPanel(int panelItem)
 {
     blockSignals(true);
-    ExtensionInfo* panelInfo = (KickerConfig::self()->extensionsInfo())[panelItem];
+    ExtensionInfo* panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
 
     if (!panelInfo)
     {
         m_panelList->setCurrentItem(0);
-        panelInfo = (KickerConfig::self()->extensionsInfo())[panelItem];
+        panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
 
         if (!panelInfo)
         {
@@ -529,18 +530,18 @@ void PositionTab::switchPanel(int panelItem)
     // because this changes when panels come and go, we have 
     // to be overly pedantic and remove the custom item every time and
     // decide to add it back again, or not
-    m_panelSize->removeItem(KPanelExtension::SizeCustom);
+    m_panelSize->removeItem(Plasma::SizeCustom);
     if (m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax)
     {
-        m_panelSize->insertItem(i18n("Custom"), KPanelExtension::SizeCustom);
+        m_panelSize->insertItem(i18n("Custom"), Plasma::SizeCustom);
     }
 
-    if (m_panelInfo->_size >= KPanelExtension::SizeCustom ||
+    if (m_panelInfo->_size >= Plasma::SizeCustom ||
         (!m_panelInfo->_useStdSizes &&
          m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax)) // compat
     {
-        m_panelSize->setCurrentItem(KPanelExtension::SizeCustom);
-        sizeChanged(KPanelExtension::SizeCustom);
+        m_panelSize->setCurrentItem(Plasma::SizeCustom);
+        sizeChanged(Plasma::SizeCustom);
     }
     else
     {
@@ -553,8 +554,8 @@ void PositionTab::switchPanel(int panelItem)
     m_customSlider->setMaxValue(m_panelInfo->_customSizeMax);
     m_customSlider->setTickInterval(m_panelInfo->_customSizeMax / 6);
     m_customSlider->setValue(m_panelInfo->_customSize);
-    m_customSpinbox->setMinValue(m_panelInfo->_customSizeMin);
-    m_customSpinbox->setMaxValue(m_panelInfo->_customSizeMax);
+    m_customSpinbox->setMinimum(m_panelInfo->_customSizeMin);
+    m_customSpinbox->setMaximum(m_panelInfo->_customSizeMax);
     m_customSpinbox->setValue(m_panelInfo->_customSize);
     m_sizeGroup->setEnabled(m_panelInfo->_resizeable);
     m_panelPos = m_panelInfo->_position;
@@ -635,7 +636,7 @@ void PositionTab::infoUpdated()
 
 void PositionTab::extensionAboutToChange(const QString& configPath)
 {
-    ExtensionInfo* extension = (KickerConfig::self()->extensionsInfo())[m_panelList->currentItem()];
+    ExtensionInfo* extension = (KickerConfig::the()->extensionsInfo())[m_panelList->currentItem()];
     if (extension && extension->_configPath == configPath)
     {
         storeInfo();
@@ -644,7 +645,7 @@ void PositionTab::extensionAboutToChange(const QString& configPath)
 
 void PositionTab::extensionChanged(const QString& configPath)
 {
-    ExtensionInfo* extension = (KickerConfig::self()->extensionsInfo())[m_panelList->currentItem()];
+    ExtensionInfo* extension = (KickerConfig::the()->extensionsInfo())[m_panelList->currentItem()];
     if (extension && extension->_configPath == configPath)
     {
         m_panelInfo = 0;
@@ -661,13 +662,13 @@ void PositionTab::storeInfo()
 
     // Magic numbers stolen from kdebase/kicker/core/global.cpp
     // PGlobal::sizeValue()
-    if (m_panelSize->currentItem() < KPanelExtension::SizeCustom)
+    if (m_panelSize->currentItem() < Plasma::SizeCustom)
     {
         m_panelInfo->_size = m_panelSize->currentItem();
     }
     else
     {
-        m_panelInfo->_size = KPanelExtension::SizeCustom;
+        m_panelInfo->_size = Plasma::SizeCustom;
         m_panelInfo->_customSize = m_customSlider->value();
     }
 
@@ -715,11 +716,11 @@ void PositionTab::showIdentify()
 void PositionTab::extensionRemoved(ExtensionInfo* info)
 {
     int count = m_panelList->count();
-    int extensionCount = KickerConfig::self()->extensionsInfo().count();
+    int extensionCount = KickerConfig::the()->extensionsInfo().count();
     int index = 0;
     for (; index < count && index < extensionCount; ++index)
     {
-        if (KickerConfig::self()->extensionsInfo()[index] == info)
+        if (KickerConfig::the()->extensionsInfo()[index] == info)
         {
             break;
         }

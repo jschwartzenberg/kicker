@@ -270,16 +270,16 @@ QStringList Kicker::configModules(bool controlCenter)
 
     if (controlCenter)
     {
-        args << "kde-panel.desktop";
+        args << "panel.desktop";
     }
     else
     {
-        args << "kde-kicker_config_arrangement.desktop"
-             << "kde-kicker_config_hiding.desktop"
-             << "kde-kicker_config_menus.desktop"
-             << "kde-kicker_config_appearance.desktop";
+        args << "kicker_config_arrangement.desktop"
+             << "kicker_config_hiding.desktop"
+             << "kicker_config_menus.desktop"
+             << "kicker_config_appearance.desktop";
     }
-    args << "kde-kcmtaskbar.desktop";
+    args << "kcmtaskbar.desktop";
     return args;
 }
 

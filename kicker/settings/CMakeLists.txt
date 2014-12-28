@@ -1,10 +1,12 @@
 
-
+include_directories( ${BLITZ_INCLUDES} )
 
 ########### next target ###############
 
 set(kcm_kicker_PART_SRCS 
    kcmodulecontainer.cpp
+   bgrender.cpp
+   bgsettings.cpp
    positiontab_impl.cpp 
    hidingtab_impl.cpp 
    lookandfeeltab_impl.cpp 
@@ -29,7 +31,8 @@ kde4_add_ui3_files(kcm_kicker_PART_SRCS
 kde4_add_plugin(kcm_kicker ${kcm_kicker_PART_SRCS})
 
 
-target_link_libraries(kcm_kicker  kickermain bgnd ${KDE4_KUTILS_LIBS} )
+# target_link_libraries(kcm_kicker  kickermain bgnd ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kcm_kicker  kickermain ${BLITZ_LIBRARIES} ${KDE4_KUTILS_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${X11_X11_LIB} )
 
 install(TARGETS kcm_kicker  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

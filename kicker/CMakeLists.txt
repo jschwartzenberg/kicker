@@ -81,4 +81,4 @@ add_subdirectory( applets )
 add_subdirectory( menuext ) 
 add_subdirectory( proxy ) 
 add_subdirectory( data ) 
-
+add_subdirectory( settings )

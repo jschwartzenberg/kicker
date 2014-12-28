@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=kcmkicker
-Type=Application
+Type=Service
 DocPath=kcontrol/panel/index.html#panel-hiding
 Exec=kcmshell kicker_hiding
 

@@ -17,7 +17,9 @@
  */
 
 #include <QApplication>
+#include <QDesktopWidget>
 
+#include <KConfigGroup>
 #include <kdebug.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
@@ -53,28 +55,29 @@ void ExtensionInfo::load()
     }
     else
     {
+        QString trueString ("true");
         KDesktopFile df(_desktopFile);
         _name = df.readName();
-        _resizeable = df.readEntry("X-KDE-PanelExt-Resizeable", _resizeable);
+        _resizeable = trueString.compare(df.entryMap().value("X-KDE-PanelExt-Resizeable", "true")) == 0;
 
         if (_resizeable)
         {
-            _useStdSizes = df.readEntry("X-KDE-PanelExt-StdSizes", _useStdSizes);
-            _size = df.readEntry("X-KDE-PanelExt-StdSizeDefault", _size);
-            _customSizeMin = df.readEntry("X-KDE-PanelExt-CustomSizeMin", _customSizeMin);
-            _customSizeMax = df.readEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
-            _customSize = df.readEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);
+            _useStdSizes = trueString.compare(df.entryMap().value("X-KDE-PanelExt-StdSizes", "true")) == 0;
+            _size = df.entryMap().value("X-KDE-PanelExt-StdSizeDefault", QString::number(_size)).toInt();
+            _customSizeMin = df.entryMap().value("X-KDE-PanelExt-CustomSizeMin", QString::number(_customSizeMin)).toInt();
+            _customSizeMax = df.entryMap().value("X-KDE-PanelExt-CustomSizeMax", QString::number(_customSizeMax)).toInt();
+            _customSize = df.entryMap().value("X-KDE-PanelExt-CustomSizeDefault", QString::number(_customSize)).toInt();
         }
 	QStringList allowedPos=
-            df.readEntry("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").toUpper().split(",", QString::SkipEmptyParts );
+            df.entryMap().value("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").toUpper().split(",", QString::SkipEmptyParts );
 	for (int i=0;i<4;i++) _allowedPosition[i]=false;
 	kDebug()<<"BEFORE X-KDE-PanelExt-Positions parsing";
 	for (unsigned int i=0;i<allowedPos.count();i++) {
 		kDebug()<<allowedPos[i];
-		if (allowedPos[i]=="LEFT") _allowedPosition[KPanelExtension::Left]=true;
-		if (allowedPos[i]=="RIGHT") _allowedPosition[KPanelExtension::Right]=true;
-		if (allowedPos[i]=="TOP") _allowedPosition[KPanelExtension::Top]=true;
-		if (allowedPos[i]=="BOTTOM") _allowedPosition[KPanelExtension::Bottom]=true;
+		if (allowedPos[i]=="LEFT") _allowedPosition[Plasma::Left]=true;
+		if (allowedPos[i]=="RIGHT") _allowedPosition[Plasma::Right]=true;
+		if (allowedPos[i]=="TOP") _allowedPosition[Plasma::Top]=true;
+		if (allowedPos[i]=="BOTTOM") _allowedPosition[Plasma::Bottom]=true;
 	}	
 
     }
@@ -85,28 +88,28 @@ void ExtensionInfo::load()
     if (_customSize < _customSizeMin) _customSize = _customSizeMin;
 
     KConfig c(_configFile);
-    c.setGroup("General");
+    KConfigGroup cg(&c, "General");
 
-    _position       = c.readEntry ("Position",           _position);
-    _alignment      = c.readEntry ("Alignment",          _alignment);
-    _xineramaScreen = c.readEntry ("XineramaScreen",     _xineramaScreen);
-    _showLeftHB     = c.readEntry ("ShowLeftHideButton", _showLeftHB);
-    _showRightHB    = c.readEntry ("ShowRightHideButton", _showRightHB);
-    _hideButtonSize = c.readEntry ("HideButtonSize",     _hideButtonSize);
-    _autohidePanel  = c.readEntry ("AutoHidePanel",      _autohidePanel);
-    _backgroundHide = c.readEntry ("BackgroundHide",     _backgroundHide);
-    _autoHideSwitch = c.readEntry ("AutoHideSwitch",     _autoHideSwitch);
-    _autoHideDelay  = c.readEntry ("AutoHideDelay",      _autoHideDelay);
-    _hideAnim       = c.readEntry ("HideAnimation",      _hideAnim);
-    _hideAnimSpeed  = c.readEntry ("HideAnimationSpeed", _hideAnimSpeed);
-    _unhideLocation = c.readEntry ("UnhideLocation",     _unhideLocation);
-    _sizePercentage = c.readEntry ("SizePercentage",     _sizePercentage);
-    _expandSize     = c.readEntry ("ExpandSize",         _expandSize);
+    _position       = cg.readEntry ("Position",           _position);
+    _alignment      = cg.readEntry ("Alignment",          _alignment);
+    _xineramaScreen = cg.readEntry ("XineramaScreen",     _xineramaScreen);
+    _showLeftHB     = cg.readEntry ("ShowLeftHideButton", _showLeftHB);
+    _showRightHB    = cg.readEntry ("ShowRightHideButton", _showRightHB);
+    _hideButtonSize = cg.readEntry ("HideButtonSize",     _hideButtonSize);
+    _autohidePanel  = cg.readEntry ("AutoHidePanel",      _autohidePanel);
+    _backgroundHide = cg.readEntry ("BackgroundHide",     _backgroundHide);
+    _autoHideSwitch = cg.readEntry ("AutoHideSwitch",     _autoHideSwitch);
+    _autoHideDelay  = cg.readEntry ("AutoHideDelay",      _autoHideDelay);
+    _hideAnim       = cg.readEntry ("HideAnimation",      _hideAnim);
+    _hideAnimSpeed  = cg.readEntry ("HideAnimationSpeed", _hideAnimSpeed);
+    _unhideLocation = cg.readEntry ("UnhideLocation",     _unhideLocation);
+    _sizePercentage = cg.readEntry ("SizePercentage",     _sizePercentage);
+    _expandSize     = cg.readEntry ("ExpandSize",         _expandSize);
 
     if (_resizeable)
     {
-        _size           = c.readEntry ("Size",      _size);
-        _customSize     = c.readEntry ("CustomSize", _customSize);
+        _size           = cg.readEntry ("Size",      _size);
+        _customSize     = cg.readEntry ("CustomSize", _customSize);
     }
 
     _orig_position = _position;
@@ -122,18 +125,18 @@ void ExtensionInfo::load()
 void ExtensionInfo::configChanged()
 {
     KConfig c(_configFile);
-    c.setGroup("General");
+    KConfigGroup cg(&c, "General");
 
     // check to see if the new value is different from both
     // the original value and the currently set value, then it
     // must be a newly set value, external to the panel!
-    int position  = c.readEntry ("Position", 3);
+    int position  = cg.readEntry ("Position", 3);
     if (position != _position && position != _orig_position)
     {
         _orig_position = _position = position;
     }
 
-    int alignment = c.readEntry ("Alignment", QApplication::isRightToLeft() ? 2 : 0);
+    int alignment = cg.readEntry ("Alignment", QApplication::isRightToLeft() ? 2 : 0);
     if (alignment != _alignment && alignment != _orig_alignment)
     {
         _orig_alignment = _alignment = alignment;
@@ -141,13 +144,13 @@ void ExtensionInfo::configChanged()
 
     if (_resizeable)
     {
-        int size = c.readEntry ("Size", 2);
+        int size = cg.readEntry ("Size", 2);
         if (size != _size && size != _orig_size)
         {
             _orig_size = _size = size;
         }
 
-        int customSize = c.readEntry ("CustomSize", 0);
+        int customSize = cg.readEntry ("CustomSize", 0);
         if (customSize != _customSize && customSize != _orig_customSize)
         {
             _orig_customSize = _customSize = customSize;
@@ -185,22 +188,22 @@ void ExtensionInfo::setDefaults()
 void ExtensionInfo::save()
 {
     KConfig c(_configFile);
-    c.setGroup("General");
+    KConfigGroup cg(&c, "General");
 
-    c.writeEntry("Position",           _position);
-    c.writeEntry("Alignment",          _alignment);
-    c.writeEntry("XineramaScreen",     _xineramaScreen);
-    c.writeEntry("ShowLeftHideButton", _showLeftHB);
-    c.writeEntry("ShowRightHideButton", _showRightHB);
-    c.writeEntry("AutoHidePanel",      _autohidePanel);
-    c.writeEntry("BackgroundHide",     _backgroundHide);
-    c.writeEntry("AutoHideSwitch",     _autoHideSwitch);
-    c.writeEntry("AutoHideDelay",      _autoHideDelay);
-    c.writeEntry("HideAnimation",      _hideAnim);
-    c.writeEntry("HideAnimationSpeed", _hideAnimSpeed);
-    c.writeEntry("UnhideLocation",     _unhideLocation);
-    c.writeEntry("SizePercentage",     _sizePercentage );
-    c.writeEntry("ExpandSize",         _expandSize );
+    cg.writeEntry("Position",           _position);
+    cg.writeEntry("Alignment",          _alignment);
+    cg.writeEntry("XineramaScreen",     _xineramaScreen);
+    cg.writeEntry("ShowLeftHideButton", _showLeftHB);
+    cg.writeEntry("ShowRightHideButton", _showRightHB);
+    cg.writeEntry("AutoHidePanel",      _autohidePanel);
+    cg.writeEntry("BackgroundHide",     _backgroundHide);
+    cg.writeEntry("AutoHideSwitch",     _autoHideSwitch);
+    cg.writeEntry("AutoHideDelay",      _autoHideDelay);
+    cg.writeEntry("HideAnimation",      _hideAnim);
+    cg.writeEntry("HideAnimationSpeed", _hideAnimSpeed);
+    cg.writeEntry("UnhideLocation",     _unhideLocation);
+    cg.writeEntry("SizePercentage",     _sizePercentage );
+    cg.writeEntry("ExpandSize",         _expandSize );
 
     // FIXME: this is set only for the main panel and only in the
     // look 'n feel (aka appearance) tab. so we can't save it here
@@ -209,8 +212,8 @@ void ExtensionInfo::save()
 
     if (_resizeable)
     {
-        c.writeEntry("Size",      _size);
-        c.writeEntry("CustomSize", _customSize);
+        cg.writeEntry("Size",      _size);
+        cg.writeEntry("CustomSize", _customSize);
     }
 
     _orig_position = _position;

@@ -35,7 +35,7 @@
 
 #include <kickerSettings.h>
 #include "advancedDialog.h"
-#include "global.h"
+// #include "global.h"
 #include "main.h"
 
 #include "lookandfeeltab_impl.h"
@@ -71,7 +71,12 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
 
 void LookAndFeelTab::browseTheme()
 {
-    browseTheme(kcfg_BackgroundTheme->url());
+    browseTheme(kcfg_BackgroundTheme->url().url());
+}
+
+void LookAndFeelTab::browseTheme(const KUrl& newtheme)
+{
+    browseTheme(newtheme.path());
 }
 
 void LookAndFeelTab::browseTheme(const QString& newtheme)
@@ -118,7 +123,7 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
 {
     QString theme = themepath;
     if (theme[0] != '/')
-        theme = locate("data", "kicker/" + theme);
+        theme = KStandardDirs::locate("data", "kicker/" + theme);
 
     QImage tmpImg(theme);
     if(!tmpImg.isNull())
@@ -126,12 +131,13 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
         tmpImg = tmpImg.smoothScale(m_backgroundLabel->contentsRect().width(),
                                     m_backgroundLabel->contentsRect().height());
         if (kcfg_ColorizeBackground->isChecked())
-            KickerLib::colorize(tmpImg);
+            Plasma::colorize(tmpImg);
         theme_preview.convertFromImage(tmpImg);
         if(!theme_preview.isNull()) {
             // avoid getting changed(true) from KConfigDialogManager for the default value
-            if( KickerSettings::backgroundTheme() == themepath )
-                KickerSettings::setBackgroundTheme( theme );
+            fprintf(stderr, "Disabled KickerSettings::backgroundTheme\n");
+// 	    if( KickerSettings::backgroundTheme() == themepath )
+//                 KickerSettings::setBackgroundTheme( theme );
             kcfg_BackgroundTheme->lineEdit()->setText(theme);
             m_backgroundLabel->setPixmap(theme_preview);
             if (isNew)
@@ -149,9 +155,9 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
 
 void LookAndFeelTab::load()
 {
-    KConfig config(KickerConfig::self()->configName(), false, false);
+    KConfig config(KickerConfig::the()->configName());
 
-    config.setGroup("General");
+    KConfigGroup cg(&config, "General");
 
     bool use_theme = kcfg_UseBackgroundTheme->isChecked();
     QString theme = kcfg_BackgroundTheme->lineEdit()->text().trimmed();
@@ -168,7 +174,7 @@ void LookAndFeelTab::load()
     }
 
     QString tile;
-    config.setGroup("buttons");
+    KConfigGroup cgButtons(&config, "buttons");
 
     kmenuTileChanged(m_kmenuTile->currentItem());
     desktopTileChanged(m_desktopTile->currentItem());
@@ -176,42 +182,42 @@ void LookAndFeelTab::load()
     browserTileChanged(m_browserTile->currentItem());
     wlTileChanged(m_windowListTile->currentItem());
 
-    if (config.readEntry("EnableTileBackground", false))
+    if (cgButtons.readEntry("EnableTileBackground", false))
     {
-        config.setGroup("button_tiles");
+        KConfigGroup cgButtonTiles(&cgButtons, "button_tiles");
 
-        if (config.readEntry("EnableKMenuTiles", false))
+        if (cgButtonTiles.readEntry("EnableKMenuTiles", false))
         {
-            tile = config.readEntry("KMenuTile", "solid_blue");
-            m_kmenuTile->setCurrentItem(m_tilename.findIndex(tile));
+            tile = cgButtonTiles.readEntry("KMenuTile", "solid_blue");
+            m_kmenuTile->setCurrentItem(tile);
             kcfg_KMenuTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableDesktopButtonTiles", false))
+        if (cgButtonTiles.readEntry("EnableDesktopButtonTiles", false))
         {
-            tile = config.readEntry("DesktopButtonTile", "solid_orange");
-            m_desktopTile->setCurrentItem(m_tilename.findIndex(tile));
+            tile = cgButtonTiles.readEntry("DesktopButtonTile", "solid_orange");
+            m_desktopTile->setCurrentItem(tile);
             kcfg_DesktopButtonTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableURLTiles", false))
+        if (cgButtonTiles.readEntry("EnableURLTiles", false))
         {
-            tile = config.readEntry("URLTile", "solid_gray");
-            m_urlTile->setCurrentItem(m_tilename.findIndex(tile));
+            tile = cgButtonTiles.readEntry("URLTile", "solid_gray");
+            m_urlTile->setCurrentItem(tile);
             kcfg_URLTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableBrowserTiles", false))
+        if (cgButtonTiles.readEntry("EnableBrowserTiles", false))
         {
-            tile = config.readEntry("BrowserTile", "solid_green");
-            m_browserTile->setCurrentItem(m_tilename.findIndex(tile));
+            tile = cgButtonTiles.readEntry("BrowserTile", "solid_green");
+            m_browserTile->setCurrentItem(tile);
             kcfg_BrowserTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableWindowListTiles", false))
+        if (cgButtonTiles.readEntry("EnableWindowListTiles", false))
         {
-            tile = config.readEntry("WindowListTile", "solid_green");
-            m_windowListTile->setCurrentItem(m_tilename.findIndex(tile));
+            tile = cgButtonTiles.readEntry("WindowListTile", "solid_green");
+            m_windowListTile->setCurrentItem(tile);
             kcfg_WindowListTileColor->setEnabled(tile == "Colorize");
         }
     }
@@ -220,74 +226,74 @@ void LookAndFeelTab::load()
 
 void LookAndFeelTab::save()
 {
-    KConfig config(KickerConfig::self()->configName(), false, false);
+    KConfig config(KickerConfig::the()->configName());
 
-    config.setGroup("General");
+    KConfigGroup cgGeneral(&config, "General");
 
-    config.setGroup("button_tiles");
+    KConfigGroup cgGeneralButtonTiles(&config, "button_tiles");
     bool enableTiles = false;
     int tile = m_kmenuTile->currentItem();
     if (tile > 0)
     {
         enableTiles = true;
-        config.writeEntry("EnableKMenuTiles", true);
-        config.writeEntry("KMenuTile", m_tilename[m_kmenuTile->currentItem()]);
+        cgGeneralButtonTiles.writeEntry("EnableKMenuTiles", true);
+        cgGeneralButtonTiles.writeEntry("KMenuTile", m_tilename[m_kmenuTile->currentItem()]);
     }
     else
     {
-        config.writeEntry("EnableKMenuTiles", false);
+        cgGeneralButtonTiles.writeEntry("EnableKMenuTiles", false);
     }
 
     tile = m_desktopTile->currentItem();
     if (tile > 0)
     {
         enableTiles = true;
-        config.writeEntry("EnableDesktopButtonTiles", true);
-        config.writeEntry("DesktopButtonTile", m_tilename[m_desktopTile->currentItem()]);
+        cgGeneralButtonTiles.writeEntry("EnableDesktopButtonTiles", true);
+        cgGeneralButtonTiles.writeEntry("DesktopButtonTile", m_tilename[m_desktopTile->currentItem()]);
     }
     else
     {
-        config.writeEntry("EnableDesktopButtonTiles", false);
+        cgGeneralButtonTiles.writeEntry("EnableDesktopButtonTiles", false);
     }
 
     tile = m_urlTile->currentItem();
     if (tile > 0)
     {
         enableTiles = true;
-        config.writeEntry("EnableURLTiles", tile > 0);
-        config.writeEntry("URLTile", m_tilename[m_urlTile->currentItem()]);
+        cgGeneralButtonTiles.writeEntry("EnableURLTiles", tile > 0);
+        cgGeneralButtonTiles.writeEntry("URLTile", m_tilename[m_urlTile->currentItem()]);
     }
     else
     {
-        config.writeEntry("EnableURLTiles", false);
+        cgGeneralButtonTiles.writeEntry("EnableURLTiles", false);
     }
 
     tile = m_browserTile->currentItem();
     if (tile > 0)
     {
         enableTiles = true;
-        config.writeEntry("EnableBrowserTiles", tile > 0);
-        config.writeEntry("BrowserTile", m_tilename[m_browserTile->currentItem()]);
+        cgGeneralButtonTiles.writeEntry("EnableBrowserTiles", tile > 0);
+        cgGeneralButtonTiles.writeEntry("BrowserTile", m_tilename[m_browserTile->currentItem()]);
     }
     else
     {
-        config.writeEntry("EnableBrowserTiles", false);
+        cgGeneralButtonTiles.writeEntry("EnableBrowserTiles", false);
     }
 
     tile = m_windowListTile->currentItem();
     if (tile > 0)
     {
         enableTiles = true;
-        config.writeEntry("EnableWindowListTiles", tile > 0);
-        config.writeEntry("WindowListTile", m_tilename[m_windowListTile->currentItem()]);
+        cgGeneralButtonTiles.writeEntry("EnableWindowListTiles", tile > 0);
+        cgGeneralButtonTiles.writeEntry("WindowListTile", m_tilename[m_windowListTile->currentItem()]);
     }
     else
     {
-        config.writeEntry("EnableWindowListTiles", false);
+        cgGeneralButtonTiles.writeEntry("EnableWindowListTiles", false);
     }
 
-    config.setGroup("buttons");
-    config.writeEntry("EnableTileBackground", enableTiles);
+    KConfigGroup buttons(&cgGeneralButtonTiles, "buttons");
+    buttons.writeEntry("EnableTileBackground", enableTiles);
 
     config.sync();
 }
@@ -343,7 +349,7 @@ void LookAndFeelTab::fillTileCombos()
 
     // Transform tile to words with title case
     // The same is done when generating messages for translation
-    QStringList words = tile.split( "[_ ]"));
+    QStringList words = tile.split( "[_ ]");
     for (QStringList::iterator w = words.begin(); w != words.end(); ++w)
       (*w)[0] = (*w)[0].toUpper();
     tile = i18n(words.join(" ").toUtf8());

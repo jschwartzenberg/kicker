@@ -9,6 +9,9 @@ include_directories( ${BLITZ_INCLUDES} )
 add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
+set(backgroundlib_SRCS bgrender.cpp bgsettings.cpp)
+set(kcmbackgroundlib_SRCS bgdialog.cpp bgadvanced.cpp bgmonitor.cpp bgwallpaper.cpp)
+
 kde4_add_ui3_files(kcmbackgroundlib_SRCS
     bgdialog_ui.ui
     bgwallpaper_ui.ui

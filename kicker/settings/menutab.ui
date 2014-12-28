@@ -391,7 +391,7 @@
     <tabstop>kcfg_NumVisibleEntries</tabstop>
 </tabstops>
 <includes>
-    <include location="global" impldecl="in implementation">klistview.h</include>
+    <include location="global" impldecl="in implementation">k3listview.h</include>
     <include location="global" impldecl="in implementation">knuminput.h</include>
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
@@ -399,6 +399,7 @@
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
     <includehint>k3listview.h</includehint>
+    <includehint>KIntNumInput</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>

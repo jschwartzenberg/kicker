@@ -15,9 +15,11 @@
  *  along with this program; if not, write to the Free Software
  */
 
+#include <Q3CString>
 #include <QComboBox>
 
-#include <dcopclient.h>
+#include <QDBusConnection>
+#include <QDBusMessage>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kcmodulecontainer.h>
@@ -42,7 +44,7 @@
 KickerConfig *KickerConfig::m_self = 0;
 static K3StaticDeleter<KickerConfig> staticKickerConfigDeleter;
 
-KickerConfig *KickerConfig::self()
+KickerConfig *KickerConfig::the()
 {
     if (!m_self)
     {
@@ -53,20 +55,22 @@ KickerConfig *KickerConfig::self()
 
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : QObject(parent, name),
-    DCOPObject("KickerConfig"),
     configFileWatch(new KDirWatch(this)),
     m_currentPanelIndex(0)
 {
+    QDBusConnection::sessionBus().registerObject("KickerConfig", this, QDBusConnection::ExportScriptableSlots);
     m_screenNumber = QX11Info::display() ? DefaultScreen(QX11Info::display()) : 0;
 
     KickerSettings::instance(configName().toLatin1());
 
     init();
 
-    kapp->dcopClient()->setNotifications(true);
-    connectDCOPSignal("kicker", "kicker", "configSwitchToPanel(QString)",
-                      "jumpToPanel(QString)", false);
-    kapp->dcopClient()->send("kicker", "kicker", "configLaunched()", QByteArray());
+//     QDBusConnection::sessionBus()->setNotifications(true);
+//     connectDCOPSignal("kicker", "kicker", "configSwitchToPanel(QString)",
+//                       "jumpToPanel(QString)", false);
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.githib.jschwartzenberg.kicker.KickerConfig", "", "", "configLaunched");
+//     QDBusConnection::sessionBus().send("kicker", "kicker", "configLaunched()", QByteArray());
+    QDBusConnection::sessionBus().send(msg);
 
     connect(this, SIGNAL(hidingPanelChanged(int)),
             this, SLOT(setCurrentPanelIndex(int)));
@@ -102,7 +106,7 @@ void KickerConfig::init()
     QString configname = configName();
     QString configpath = KGlobal::dirs()->findResource("config", configname);
     if (configpath.isEmpty())
-       configpath = locateLocal("config", configname);
+       configpath = KStandardDirs::locateLocal("config", configname);
     KSharedConfig::Ptr config = KSharedConfig::openConfig(configname);
 
     if (m_extensionInfo.isEmpty())
@@ -139,13 +143,13 @@ void KickerConfig::notifyKicker()
     emit aboutToNotifyKicker();
 
     // Tell kicker about the new config file.
-    if (!kapp->dcopClient()->isAttached())
+//     if (!kapp->dcopClient()->isAttached())
     {
-        kapp->dcopClient()->attach();
+//         kapp->dcopClient()->attach();
     }
 
     QByteArray data;
-    QCString appname;
+    Q3CString appname;
 
     if (m_screenNumber == 0)
     {
@@ -156,13 +160,14 @@ void KickerConfig::notifyKicker()
         appname.sprintf("kicker-screen-%d", m_screenNumber);
     }
 
-    kapp->dcopClient()->send(appname, "kicker", "configure()", data);
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.github.jschwartzenberg.kicker.KickerConfig", "", "", "configure");
+//     QDBusConnection::sessionBus().send(appname, "kicker", "configure()", data);
 }
 
 void KickerConfig::setupExtensionInfo(KConfig& config, bool checkExists, bool reloadIfExists)
 {
-    config.setGroup("General");
-    QStringList elist = config.readEntry("Extensions2", QStringList());
+    KConfigGroup cg (&config, ("General"));
+    QStringList elist = cg.readEntry("Extensions2", QStringList());
 
     // all of our existing extensions
     // we'll remove ones we find which are still there the oldExtensions, and delete
@@ -175,16 +180,16 @@ void KickerConfig::setupExtensionInfo(KConfig& config, bool checkExists, bool re
         QString group(*it);
 
         // is there a config group for this extension?
-        if (!config.hasGroup(group) || group.contains("Extension") < 1)
+        if (!config.hasGroup(group) || group.contains("Extension"))
         {
             continue;
         }
 
         // set config group
-        config.setGroup(group);
+        KConfigGroup cg2 (&config, group);
 
-        QString df = KGlobal::dirs()->findResource("extensions", config.readEntry("DesktopFile"));
-        QString configname = config.readEntry("ConfigFile");
+        QString df = KGlobal::dirs()->findResource("extensions", cg2.readEntry("DesktopFile"));
+        QString configname = cg2.readEntry("ConfigFile");
         QString configpath = KGlobal::dirs()->findResource("config", configname);
 
         if (checkExists)

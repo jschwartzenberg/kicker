@@ -42,7 +42,7 @@ add_subdirectory(libs)
 
 
 # apps we need to figure out what to do with
-#add_subdirectory( kcontrol )
+add_subdirectory( kcontrol )
 
 # data
 #add_subdirectory( doc )

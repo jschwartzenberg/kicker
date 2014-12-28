@@ -48,6 +48,7 @@ protected:
 
 protected Q_SLOTS:
     void browseTheme();
+    void browseTheme(const KUrl&);
     void browseTheme(const QString&);
     void enableTransparency( bool );
 

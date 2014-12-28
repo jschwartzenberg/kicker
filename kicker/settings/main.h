@@ -18,7 +18,6 @@
 #ifndef __main_h__
 #define __main_h__
 
-#include <dcopobject.h>
 #include <kconfig.h>
 
 #include "extensionInfo.h"
@@ -27,10 +26,10 @@ class QComboBox;
 class KAboutData;
 class KDirWatch;
 
-class KickerConfig : public QObject, public DCOPObject
+class KickerConfig : public QObject
 {
     Q_OBJECT
-    K_DCOP
+    Q_CLASSINFO("D-Bus Interface", "com.github.jschwartzenberg.kicker.KickerConfig")
 
 public:
     static KickerConfig *the();
@@ -49,8 +48,8 @@ public:
 
     int currentPanelIndex() const { return m_currentPanelIndex; }
 
-k_dcop:
-    void jumpToPanel(const QString& panelConfig);
+public Q_SLOTS:
+    Q_SCRIPTABLE void jumpToPanel(const QString& panelConfig);
 
 Q_SIGNALS:
     void positionPanelChanged(int);

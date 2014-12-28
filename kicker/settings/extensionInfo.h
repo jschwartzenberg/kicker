@@ -25,7 +25,7 @@
 
 class ExtensionInfo;
 
-typedef QValueList<ExtensionInfo*> ExtensionInfoList;
+typedef Q3ValueList<ExtensionInfo*> ExtensionInfoList;
 
 class ExtensionInfo
 {

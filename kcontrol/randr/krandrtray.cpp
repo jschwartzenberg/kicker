@@ -101,7 +101,7 @@ void KRandRSystemTray::slotPrepareMenu()
 
 	m_menu->addSeparator();
 
-	QAction *actPrefs = actionCollection()->addAction( QString() );
+	QAction *actPrefs = (QAction*)actionCollection()->addAction( QString() );
         actPrefs->setIcon( KIcon( "configure" ) );
         actPrefs->setText( i18n( "Configure Display..." ) );
         connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );

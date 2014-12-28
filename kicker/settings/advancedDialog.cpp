@@ -73,8 +73,8 @@ advancedDialog::~advancedDialog()
 
 void advancedDialog::load()
 {
-    KConfig c(KickerConfig::self()->configName(), false, false);
-    c.setGroup("General");
+    KConfig kc(KickerConfig::the()->configName());
+    KConfigGroup c(&kc, "General");
 
     bool fadedOut = c.readEntry("FadeOutAppletHandles", false);
     bool hideHandles = c.readEntry("HideAppletHandles", false);
@@ -100,9 +100,9 @@ void advancedDialog::load()
 
 void advancedDialog::save()
 {
-    KConfig c(KickerConfig::self()->configName(), false, false);
+    KConfig kc(KickerConfig::the()->configName());
 
-    c.setGroup("General");
+    KConfigGroup c(&kc, "General");
     c.writeEntry("FadeOutAppletHandles",
                  m_advancedWidget->fadeOutHandles->isChecked());
     c.writeEntry("HideAppletHandles",
@@ -124,15 +124,15 @@ void advancedDialog::save()
 
         // is there a config group for this extension?
         if(!c.hasGroup(group) ||
-           group.contains("Extension") < 1)
+           group.contains("Extension"))
         {
             continue;
         }
 
         // set config group
-        c.setGroup(group);
-        KConfig extConfig(c.readEntry("ConfigFile"));
-        extConfig.setGroup("General");
+        KConfigGroup cg(&c, group);
+        KConfig extConfigkc(cg.readEntry("ConfigFile"));
+        KConfigGroup extConfig(&extConfigkc, "General");
         extConfig.writeEntry("FadeOutAppletHandles",
                              m_advancedWidget->fadeOutHandles->isChecked());
         extConfig.writeEntry("HideAppletHandles",
@@ -151,7 +151,7 @@ void advancedDialog::save()
    
     c.sync();
 
-    KickerConfig::self()->notifyKicker();
+    KickerConfig::the()->notifyKicker();
     enableButtonApply(false);
 }
 

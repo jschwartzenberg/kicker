@@ -18,16 +18,16 @@
 #ifndef __menutab_impl_h__
 #define __menutab_impl_h__
 
-#include <QListView>
+#include <Q3ListView>
 
 #include "menutab.h"
 
-class kSubMenuItem : public QObject, public QCheckListItem
+class kSubMenuItem : public QObject, public Q3CheckListItem
 {
     Q_OBJECT
 
     public:
-        kSubMenuItem(QListView* parent, 
+        kSubMenuItem(Q3ListView* parent, 
                      const QString& visibleName,
                      const QString& desktopFile,
                      const QPixmap& icon,
